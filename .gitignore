@@ -1,4 +1,5 @@
 *
+!assets/**/*
 !README.md
 !.gitignore
 !CMSModules/Xperience.Jira/**/*
