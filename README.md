@@ -42,3 +42,48 @@ You will need to select the appropriate __Project__ and __Issue type__ for the n
 The __Summary__ field (the issue title) is required, and your company may have added custom fields to the issue type that are required as well. You can use macros in these fields such as `{%NodeAliasPath%}` which will be resolved according to the page that is using the workflow.
 
 > :warning: Macros in issue fields only resolve properly for the __Workflow__ action. When adding the __Create Jira issue__ to Marketing automation processes, macros cannot be used.
+
+#### Linking issues and objects
+
+Using the __Create Jira issue__ action "links" the page or automation process to the newly-created Jira issue and its project. This is done by storing the IDs of the issue and project in the `DocumentCustomData` column (for workflows) and `StateCustomData` for automation processes. If you need to retrieve these values for any reason (e.g. within a custom handler), you can use [`JiraHelper.GetLinkedIssue()`](/Old_App_Code/CMSModules/Xperience.Jira/JiraHelper.cs#L562) or [`JiraHelper.GetLinkedProject()`](/Old_App_Code/CMSModules/Xperience.Jira/JiraHelper.cs#L583).
+
+### Creating webhooks
+
+The __Create Jira webhook__ action can be used to create new webhooks which appear in Jira under __Settings > System > WebHooks__. These webhooks will execute when the specified action (provided by you) is taken in Jira. By default, the page/process will be moved to the next step, and the Jira webhook will be deleted. However, you can override the default behavior by registering an [event handler](#custom-webhook-handling).
+
+There are 2 required properties and one optional property:
+
+![Create webhook](/assets/create-webhook.png)
+
+- __Name__: An arbirary name for the webhook which will appear in Jira
+- __Events__: A comma-separated list of Jira events that will trigger the webhook. See [Registering events for a webhook](https://developer.atlassian.com/server/jira/platform/webhooks/#registering-events-for-a-webhook) for a list of valid events
+- __Scope__ (optional): One or more JQL queries that will filter when the webhook triggers. For example, the `jira:issue_updated` event will trigger for all issues unless you specify certain issues, projects, resolutions, etc.. See [Constructing JQL queries](https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ConstructingJQLqueries) for more information on writing queries  
+If the page/process has been [linked](#linking-issues-and-objects) to an issue, you can use the macros `##LinkedIssue##` and `##LinkedProject##` in the scope to reference the linked values
+
+When the webhook is created, the workflow will move to the next step. If you'd like the current workflow to "wait" for the webhook to trigger, add a __Standard__ step after it for Workflows or __Approve progress__ for automation processes. Take the following Marketing automation process as an example:
+
+![Process example](/assets/process-example.png)
+
+Your website has a "Contact us" form which your customers submit with questions about your products. This automation process will create a new issue for your marketers to call the customer, then create a webhook with the following properties:
+
+- __Events__: _jira:issue_updated_
+- __Scope__: _issue-related-events-section:issue = ##LinkedIssue## AND resolution = Done_
+
+The process will stop at the "Wait for webhook" step. When the linked Jira issue is moved to a step with the "Done" resolution, the webhook will trigger and the process will be moved to the next step, setting a custom contact property and then finishing.
+
+#### Custom webhook handling
+
+If you want to prevent the default webhook functionality which moves the workflow to the next step, or add your own to before/after that occurs, you can register [custom event handlers](https://docs.xperience.io/custom-development/handling-global-events):
+
+- __JiraEvents.WebhookTriggered.Before__
+- __JiraEvents.WebhookTriggered.After__
+
+The event handlers are provided with the linked object of the workflow (a `TreeNode` or `AutomationStateInfo`) and the ID of the linked Jira issue and project. You can prevent the default webhook functionality in the `Before` handler by calling `Cancel()`:
+
+```cs
+JiraEvents.WebhookTriggered.Before += (object sender, WebhookTriggeredArgs e) =>
+{
+    // Your code here
+    e.Cancel();
+};
+```
