@@ -1,0 +1,5 @@
+*
+!README.md
+!.gitignore
+!CMSModules/Xperience.Jira/**/*
+!Old_App_Code/CMSModules/Xperience.Jira/**/*
