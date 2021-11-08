@@ -1,22 +1,27 @@
-[![Nuget](https://img.shields.io/nuget/v/Xperience.Jira)](https://www.nuget.org/packages/Xperience.Jira) [![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico)
+[![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico)
 
 # Xperience Jira integration
 
 This package contains custom [Workflow](https://docs.xperience.io/managing-website-content/working-with-pages/using-workflows) and [Marketing automation](https://docs.xperience.io/on-line-marketing-features/managing-your-on-line-marketing-features/marketing-automation) actions for managing Jira issues. [Jira webhooks](https://developer.atlassian.com/server/jira/platform/webhooks/) can also be created automatically to manage Xperience objects when actions are performed in Jira.
 
-## Installing and enabling
+## Installing
 
-1. Download the export package located in the [CMSSiteUtils/Export](/CMSSiteUtils/Export) folder
-2. In the __Sites application__, [import](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects) the package
-3. Go to __Modules > Membership > Classes tab > User class__
-4. Add a new field named __JiraApiToken__:
+1. Download the export package located in the [/CMSSiteUtils/Export](/CMSSiteUtils/Export) folder
+2. In the __Sites application__, [import](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects) the package with __Import files__ and __Import code files__ checked
+3. Follow [these instructions](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects#Importingasiteorobjects-Importingpackageswithfiles) to include the imported _/CMSModules/Xperience.Jira_ and _/Old_App_Code/CMSModules/Xperience.Jira_ folders in your project
+4. Build the CMS project
+
+### Enabling the integration
+
+1. Go to __Modules > Membership > Classes tab > User class__
+2. Add a new field named __JiraApiToken__:
 
 ![User class](/assets/user-module.png)
 
-5. Logged into Jira as an admin, go to https://id.atlassian.com/manage-profile/security/api-tokens and generate a new API token
-6. In the __Users application__ locate the default _Global Administrator_ account whose ID is set in __Settings > System > Default user ID__
-7. Ensure that the user's email matches the Jira admin's email, and save the generated API token on the __Custom fields tab__
-8. (optional) Repeat this process for other Xperience users by having them generate and API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
+3. Logged into Jira as an admin, go to https://id.atlassian.com/manage-profile/security/api-tokens and generate a new API token
+4. In the __Users application__ locate the default _Global Administrator_ account whose ID is set in __Settings > System > Default user ID__
+5. Ensure that the user's email matches the Jira admin's email, and save the generated API token on the __Custom fields tab__
+6. (optional) Repeat this process for other Xperience users by having them generate and API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
 
 ### Settings
 
