@@ -1,8 +1,10 @@
 *
+!.gitignore
 !CONTRIBUTING.md
 !CODE_OF_CONDUCT.md
-!assets/**/*
+!LICENSE
 !README.md
-!.gitignore
+!assets/**/*
+!.github/**/*
 !CMSModules/Xperience.Jira/**/*
 !Old_App_Code/CMSModules/Xperience.Jira/**/*
