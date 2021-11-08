@@ -73,7 +73,7 @@ The process will stop at the "Wait for webhook" step. When the linked Jira issue
 
 #### Custom webhook handling
 
-If you want to prevent the default webhook functionality which moves the workflow to the next step, or add your own to before/after that occurs, you can register [custom event handlers](https://docs.xperience.io/custom-development/handling-global-events):
+If you want to prevent the default webhook functionality which moves the workflow to the next step, or run your own code before/after that occurs, you can register [custom event handlers](https://docs.xperience.io/custom-development/handling-global-events):
 
 - __JiraEvents.WebhookTriggered.Before__
 - __JiraEvents.WebhookTriggered.After__
