@@ -21,7 +21,7 @@ This package contains custom [Workflow](https://docs.xperience.io/managing-websi
 3. Logged into Jira as an admin, go to https://id.atlassian.com/manage-profile/security/api-tokens and generate a new API token
 4. In the __Users application__ locate the default _Global Administrator_ account whose ID is set in __Settings > System > Default user ID__
 5. Ensure that the user's email matches the Jira admin's email, and save the generated API token on the __Custom fields tab__
-6. (optional) Repeat this process for other Xperience users by having them generate and API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
+6. (optional) Repeat this process for other Xperience users by having them generate an API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
 
 ### Settings
 
@@ -41,7 +41,7 @@ There are 3 custom actions provided by this package for both [Workflows](https:/
 
 ### Creating Jira issues
 
-To create a new Jira issue, add the __Create Jira issue__ step to your workflow or automation process. When this step is reached, a new Jira issue will be created and the workflow will continue to the next step.
+To create a new Jira issue, add the __Create Jira issue__ step to your workflow or automation process. When this step is reached, a new Jira issue will be created and the workflow will continue to the next step. If a comment is provided by the Xperience user that moves the page into this step, the comment will also be added to the Jira issue.
 
 You will need to select the appropriate __Project__ and __Issue type__ for the new issue using the drop-downs. Multiple fields will then appear under the __Fields__ property which you can use to specify the values for the new issue:
 
@@ -54,6 +54,16 @@ The __Summary__ field (the issue title) is required, and your company may have a
 #### Linking issues and objects
 
 Using the __Create Jira issue__ action "links" the page or automation process to the newly-created Jira issue and its project. This is done by storing the IDs of the issue and project in the `DocumentCustomData` column for workflows and `StateCustomData` for automation processes. If you need to retrieve these values for any reason (e.g. within a custom handler), you can use [`JiraHelper.GetLinkedIssue()`](/Old_App_Code/CMSModules/Xperience.Jira/JiraHelper.cs#L562) or [`JiraHelper.GetLinkedProject()`](/Old_App_Code/CMSModules/Xperience.Jira/JiraHelper.cs#L583).
+
+### Transitioning Jira issues between steps
+
+The __Jira transtition workflow__ action can be used to move the [linked](#linking-issues-and-objects) Jira issue to another step in its [workflow](https://confluence.atlassian.com/adminjiraserver/working-with-workflows-938847362.html). If a comment is provided by the Xperience user that moves the page into this step, the comment will also be added to the Jira issue.
+
+To ensure the transition is valid, you first need to select an existing Jira issue. You can use the search box to locate a specific issue:
+
+![Transition](/assets/transition.png)
+
+For example, if the linked issue should move from _In Progress_ to _Done_, search for an issue that is already in the _In Progress_ step. Then, the __Transition__ drop-down will list all valid transitions from that step.
 
 ### Creating webhooks
 
