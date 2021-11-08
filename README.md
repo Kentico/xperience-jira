@@ -1,3 +1,5 @@
+[![Nuget](https://img.shields.io/nuget/v/Xperience.Jira)](https://www.nuget.org/packages/Xperience.Jira) [![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico)
+
 # Xperience Jira integration
 
 This package contains custom [Workflow](https://docs.xperience.io/managing-website-content/working-with-pages/using-workflows) and [Marketing automation](https://docs.xperience.io/on-line-marketing-features/managing-your-on-line-marketing-features/marketing-automation) actions for managing Jira issues. [Jira webhooks](https://developer.atlassian.com/server/jira/platform/webhooks/) can also be created automatically to manage Xperience objects when actions are performed in Jira.
