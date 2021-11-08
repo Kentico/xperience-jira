@@ -6,16 +6,17 @@ This package contains custom [Workflow](https://docs.xperience.io/managing-websi
 
 ## Installing and enabling
 
-1. Install the [NuGet package](linkhere) in your Xperience CMS project
-2. Go to __Modules > Membership > Classes tab > User class__
-3. Add a new field named __JiraApiToken__:
+1. Download the export package located in the [CMSSiteUtils/Export](/CMSSiteUtils/Export) folder
+2. In the __Sites application__, [import](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects) the package
+3. Go to __Modules > Membership > Classes tab > User class__
+4. Add a new field named __JiraApiToken__:
 
 ![User class](/assets/user-module.png)
 
-4. Logged into Jira as an admin, go to https://id.atlassian.com/manage-profile/security/api-tokens and generate a new API token
-5. In the __Users application__ locate the default _Global Administrator_ account whose ID is set in __Settings > System > Default user ID__
-6. Ensure that the user's email matches the Jira admin's email, and save the generated API token on the __Custom fields tab__
-7. (optional) Repeat this process for other Xperience users by having them generate and API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
+5. Logged into Jira as an admin, go to https://id.atlassian.com/manage-profile/security/api-tokens and generate a new API token
+6. In the __Users application__ locate the default _Global Administrator_ account whose ID is set in __Settings > System > Default user ID__
+7. Ensure that the user's email matches the Jira admin's email, and save the generated API token on the __Custom fields tab__
+8. (optional) Repeat this process for other Xperience users by having them generate and API token and ensuring their emails match. This allows Jira actions like creating new issues and commenting appear under the correct account. Otherwise, they will be created using the Global Administrator's account
 
 ### Settings
 

@@ -6,5 +6,6 @@
 !README.md
 !assets/**/*
 !.github/**/*
+!CMSSiteUtils/Export/**/*
 !CMSModules/Xperience.Jira/**/*
 !Old_App_Code/CMSModules/Xperience.Jira/**/*
