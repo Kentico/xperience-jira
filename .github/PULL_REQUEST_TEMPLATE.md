@@ -7,7 +7,6 @@ If no issue exists, what is the fix or new feature? Were there any reasons to fi
 ### Checklist
 
 - [ ] Code follows coding conventions held in this repo
-- [ ] Code has been tested in a private Zapier integration
 - [ ] Docs have been updated (if applicable)
 - [ ] Temporary settings (e.g. variables used during development and testing) have been reverted to defaults
 
