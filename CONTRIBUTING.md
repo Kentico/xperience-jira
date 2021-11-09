@@ -40,8 +40,6 @@ If not stated otherwise, we use [feature branch workflow](https://www.atlassian.
 
 To start with coding, fork the repository you want to contribute to, create a new branch, and start coding. Once the functionality is [done](#Definition-of-Done), you can submit a [pull request](https://help.github.com/articles/about-pull-requests/).
 
-To test the new functionality, you need to install `zapier-platform-cli`, create a private integration, and test your code by creating new Zaps with it. You can follow Zapier's instructions to [install the CLI](https://platform.zapier.com/cli_tutorials/getting-started#installing-the-cli) and [deploying an app](https://platform.zapier.com/cli_tutorials/getting-started#deploying-an-app).
-
 ### Definition of Done
 <img align="right" width="100" height="100" src="https://i.imgur.com/g82Ohdv.png">
 
