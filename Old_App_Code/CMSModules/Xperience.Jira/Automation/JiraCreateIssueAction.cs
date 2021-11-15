@@ -20,7 +20,7 @@ namespace Xperience.Jira.Automation
             var issueType = GetResolvedParameter("IssueType", "");
             var metadata = GetResolvedParameter("MetaFields", "");
 
-            if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(issueType))
+            if (!String.IsNullOrEmpty(project) && !String.IsNullOrEmpty(issueType))
             {
                 var metaFields = new Hashtable();
                 foreach (var pair in metadata.Split('|'))
@@ -35,7 +35,7 @@ namespace Xperience.Jira.Automation
                 foreach (var key in contact.ColumnNames)
                 {
                     var value = ValidationHelper.GetString(contact.GetProperty(key), "");
-                    if (string.IsNullOrEmpty(value))
+                    if (String.IsNullOrEmpty(value))
                     {
                         continue;
                     }

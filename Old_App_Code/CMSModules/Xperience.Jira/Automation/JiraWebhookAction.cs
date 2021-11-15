@@ -16,7 +16,7 @@ namespace Xperience.Jira.Automation
             var events = GetResolvedParameter("Events", "");
             var scope = GetResolvedParameter("Scope", "");
 
-            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(events))
+            if (!String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(events))
             {
                 var response = JiraHelper.CreateWebhook(StateObject, name, events, scope);
 

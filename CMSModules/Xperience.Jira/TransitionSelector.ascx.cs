@@ -32,7 +32,7 @@ namespace Xperience.Jira.Controls
 
         private void LoadTransitions()
         {
-            if (!string.IsNullOrEmpty(Issue))
+            if (!String.IsNullOrEmpty(Issue))
             {
                 try
                 {
@@ -49,13 +49,13 @@ namespace Xperience.Jira.Controls
                 catch (Exception e)
                 {
                     // Couldn't load transitions, probably because the previously selected issue no longer exists
-                    if (!string.IsNullOrEmpty(loadedValue) && !IsPostBack)
+                    if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
                     {
                         drpTransitions.Items.Add(new ListItem("(saved value)", loadedValue));
                     }
                 }
 
-                if (!string.IsNullOrEmpty(loadedValue) && !IsPostBack)
+                if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
                 {
                     drpTransitions.SelectedValue = loadedValue;
                 }

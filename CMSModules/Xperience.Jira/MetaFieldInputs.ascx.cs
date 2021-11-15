@@ -63,7 +63,7 @@ namespace Xperience.Jira.Controls
             foreach(var field in CachedFields)
             {
                 var formSubmittedData = Request.Form[field.ControlUID];
-                if (!string.IsNullOrEmpty(formSubmittedData))
+                if (!String.IsNullOrEmpty(formSubmittedData))
                 {
                     var encodedValue = HttpUtility.UrlEncode(formSubmittedData);
                     values.Add($"{field.Key};{encodedValue}");
@@ -108,7 +108,7 @@ namespace Xperience.Jira.Controls
 
         private void LoadIssueMetaFields()
         {
-            if(!string.IsNullOrEmpty(Project) && !string.IsNullOrEmpty(IssueType))
+            if(!String.IsNullOrEmpty(Project) && !String.IsNullOrEmpty(IssueType))
             {
                 var project = JiraHelper.GetProjectWithCreateSchema(Project, IssueType);
                 if (project != null)
@@ -146,7 +146,7 @@ namespace Xperience.Jira.Controls
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(loadedValue) && !IsPostBack)
+                        if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
                         {
                             LoadExistingValue();
                         }

@@ -44,7 +44,7 @@ namespace Xperience.Jira.Controls
                 drpProjects.Items.Add(new ListItem(proj.Name, proj.Id));
             }
 
-            if (!string.IsNullOrEmpty(loadedValue) && !IsPostBack)
+            if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
             {
                 drpProjects.SelectedValue = loadedValue;
             }

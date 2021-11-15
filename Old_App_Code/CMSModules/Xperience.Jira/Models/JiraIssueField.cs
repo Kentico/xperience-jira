@@ -1,6 +1,7 @@
 ﻿using CMS.Base.Web.UI;
 using CMS.FormEngine.Web.UI;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -63,7 +64,7 @@ namespace Xperience.Jira.Models
             foreach (var value in AllowedValues)
             {
                 var text = value.Value<string>("name");
-                if (string.IsNullOrEmpty(text))
+                if (String.IsNullOrEmpty(text))
                 {
                     text = value.Value<string>("value");
                 }

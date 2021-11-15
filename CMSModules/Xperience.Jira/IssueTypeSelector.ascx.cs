@@ -34,7 +34,7 @@ namespace Xperience.Jira.Controls
 
         private void LoadProjectIssueTypes()
         {
-            if (!string.IsNullOrEmpty(Project))
+            if (!String.IsNullOrEmpty(Project))
             {
                 var project = JiraHelper.GetProjectWithIssueTypes(Project);
 
@@ -70,7 +70,7 @@ namespace Xperience.Jira.Controls
 
         private void Notify()
         {
-            if (!string.IsNullOrEmpty(Project))
+            if (!String.IsNullOrEmpty(Project))
             {
                 ShowInformation("Selected project has no issue types. Please select another");
             }

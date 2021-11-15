@@ -15,10 +15,10 @@ namespace Xperience.Jira.Workflow
             var issueId = JiraHelper.GetLinkedIssue(Node);
             var transition = GetResolvedParameter("Transition", "");
 
-            if (!string.IsNullOrEmpty(issueId) && !string.IsNullOrEmpty(transition))
+            if (!String.IsNullOrEmpty(issueId) && !String.IsNullOrEmpty(transition))
             {
                 var jiraHelper = new JiraHelper(User);
-                var comment = string.IsNullOrEmpty(Comment) ? $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}'" : Comment;
+                var comment = String.IsNullOrEmpty(Comment) ? $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}'" : Comment;
                 comment = this.MacroResolver.ResolveMacros(comment);
 
                 jiraHelper.AddComment(issueId, comment);

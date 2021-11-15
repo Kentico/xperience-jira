@@ -6,6 +6,7 @@ using CMS.DataEngine;
 using CMS.DocumentEngine;
 using CMS.Membership;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -54,7 +55,7 @@ namespace Xperience.Jira
                     if (infoObj is TreeNode)
                     {
                         var webhook = MovePageToNextStep(infoObj as TreeNode);
-                        if (!string.IsNullOrEmpty(webhook) && deleteWebhook)
+                        if (!String.IsNullOrEmpty(webhook) && deleteWebhook)
                         {
                             JiraHelper.DeleteWebhook(webhook);
                         }
@@ -62,7 +63,7 @@ namespace Xperience.Jira
                     else if (infoObj is AutomationStateInfo)
                     {
                         var webhook = MoveProcessToNextStep(infoObj as AutomationStateInfo);
-                        if (!string.IsNullOrEmpty(webhook) && deleteWebhook)
+                        if (!String.IsNullOrEmpty(webhook) && deleteWebhook)
                         {
                             JiraHelper.DeleteWebhook(webhook);
                         }

@@ -16,7 +16,7 @@ namespace Xperience.Jira.Workflow
             var events = GetResolvedParameter("Events", "");
             var scope = GetResolvedParameter("Scope", "");
 
-            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(events))
+            if (!String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(events))
             {
                 var response = JiraHelper.CreateWebhook(Node, name, events, scope);
 

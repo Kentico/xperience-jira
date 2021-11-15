@@ -34,7 +34,7 @@ namespace Xperience.Jira.Controls
 
         private void LoadIssues()
         {
-            if (!string.IsNullOrEmpty(Project))
+            if (!String.IsNullOrEmpty(Project))
             {
                 drpIssues.Items.Clear();
                 drpIssues.Items.Add(new ListItem("(select issue)", ""));

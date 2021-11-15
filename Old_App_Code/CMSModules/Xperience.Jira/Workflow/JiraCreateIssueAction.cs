@@ -18,7 +18,7 @@ namespace Xperience.Jira.Workflow
             var issueType = GetResolvedParameter("IssueType", "");
             var metadata = GetResolvedParameter("MetaFields", "");
 
-            if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(issueType))
+            if (!String.IsNullOrEmpty(project) && !String.IsNullOrEmpty(issueType))
             {
                 var metaFields = new Hashtable();
                 foreach (var pair in metadata.Split('|'))
@@ -34,7 +34,7 @@ namespace Xperience.Jira.Workflow
                 JiraHelper.LinkJiraIssue(Node, createdIssue, project);
 
                 // Get workflow comment
-                var comment = string.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}'" : Comment;
+                var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}'" : Comment;
                 comment = this.MacroResolver.ResolveMacros(comment);
                 jiraHelper.AddComment(createdIssue, comment);
             }

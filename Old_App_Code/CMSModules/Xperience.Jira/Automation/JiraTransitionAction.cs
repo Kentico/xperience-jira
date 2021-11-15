@@ -16,7 +16,7 @@ namespace Xperience.Jira.Automation
             var issueId = JiraHelper.GetLinkedIssue(StateObject);
             var transition = GetResolvedParameter("Transition", "");
 
-            if (!string.IsNullOrEmpty(issueId) && !string.IsNullOrEmpty(transition))
+            if (!String.IsNullOrEmpty(issueId) && !String.IsNullOrEmpty(transition))
             {
                 var user = User;
                 var comment = $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}'";
@@ -27,7 +27,7 @@ namespace Xperience.Jira.Automation
                 if (history != null)
                 {
                     user = UserInfo.Provider.Get(history.HistoryApprovedByUserID);
-                    if (!string.IsNullOrEmpty(history.HistoryComment))
+                    if (!String.IsNullOrEmpty(history.HistoryComment))
                     {
                         comment = history.HistoryComment;
                     }

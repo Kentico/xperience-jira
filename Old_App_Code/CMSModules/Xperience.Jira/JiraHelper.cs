@@ -133,7 +133,7 @@ namespace Xperience.Jira
             {
                 var email = User.Email;
                 var token = User.GetValue("JiraApiToken", "");
-                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+                if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(token))
                 {
                     // Set (non-GA) user may not have these properties set, try to get from Global Administrator
                     var admin = UserInfoProvider.AdministratorUser;
@@ -141,7 +141,7 @@ namespace Xperience.Jira
                     token = admin.GetValue("JiraApiToken", "");
                 }
 
-                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+                if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(token))
                 {
                     throw new NullReferenceException("The email and/or JiraApiToken properties have not been set.");
                 }
@@ -303,7 +303,7 @@ namespace Xperience.Jira
             var eventsArray = events.Split(',');
             obj["events"] = new JArray(eventsArray);
 
-            if (!string.IsNullOrEmpty(scope))
+            if (!String.IsNullOrEmpty(scope))
             {
                 var filters = new JObject();
                 var filterArray = scope.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
@@ -315,7 +315,7 @@ namespace Xperience.Jira
 
                     if (value.Contains(LinkedIssueMacro))
                     {
-                        if (string.IsNullOrEmpty(GetLinkedIssue(infoObj)))
+                        if (String.IsNullOrEmpty(GetLinkedIssue(infoObj)))
                         {
                             throw new ArgumentException($"Jira webhook scopes contained a filter with '{LinkedIssueMacro}', but no linked issue was found.");
                         }
@@ -324,7 +324,7 @@ namespace Xperience.Jira
                     }
                     if (value.Contains(LinkedProjectMacro))
                     {
-                        if (string.IsNullOrEmpty(GetLinkedProject(infoObj)))
+                        if (String.IsNullOrEmpty(GetLinkedProject(infoObj)))
                         {
                             throw new ArgumentException($"Jira webhook scopes contained a filter with '{LinkedProjectMacro}', but no linked project was found.");
                         }
@@ -387,7 +387,7 @@ namespace Xperience.Jira
                 var value = ValidationHelper.GetString(metaFields[key], "");
                 value = resolver.ResolveMacros(HttpUtility.UrlDecode(value));
 
-                if (!string.IsNullOrEmpty(value))
+                if (!String.IsNullOrEmpty(value))
                 {
                     if (key == "duedate")
                     {
