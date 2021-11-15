@@ -7,5 +7,5 @@
 !assets/**/*
 !.github/**/*
 !CMSSiteUtils/Export/**/*
-!CMSModules/Xperience.Jira/**/*
-!Old_App_Code/CMSModules/Xperience.Jira/**/*
+!CMSModules/Kentico.Xperience.Jira/**/*
+!Old_App_Code/CMSModules/Kentico.Xperience.Jira/**/*
