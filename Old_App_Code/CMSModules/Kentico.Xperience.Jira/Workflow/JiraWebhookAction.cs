@@ -16,19 +16,17 @@ namespace Kentico.Xperience.Jira.Workflow
             var events = GetResolvedParameter("Events", "");
             var scope = GetResolvedParameter("Scope", "");
 
-            if (!String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(events))
-            {
-                var response = JiraHelper.CreateWebhook(Node, name, events, scope);
-
-                var webhook = JObject.Parse(response);
-                var uri = new Uri(webhook.Value<string>("self"));
-                var id = uri.Segments.Last();
-                JiraHelper.LinkJiraWebhook(Node, id);
-            }
-            else
+            if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(events))
             {
                 throw new NullReferenceException("Webhook name or event was not found in the workflow step configuration.");
             }
+
+            var response = JiraHelper.CreateWebhook(Node, name, events, scope);
+
+            var webhook = JObject.Parse(response);
+            var uri = new Uri(webhook.Value<string>("self"));
+            var id = uri.Segments.Last();
+            JiraHelper.LinkJiraWebhook(Node, id);
         }
     }
 }

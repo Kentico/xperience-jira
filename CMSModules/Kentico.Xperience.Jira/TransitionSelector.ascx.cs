@@ -32,33 +32,35 @@ namespace Kentico.Xperience.Jira.Controls
 
         private void LoadTransitions()
         {
-            if (!String.IsNullOrEmpty(Issue))
+            if (String.IsNullOrEmpty(Issue))
             {
-                try
+                return;
+            }
+
+            try
+            {
+                var transitions = JiraHelper.GetTransitions(Issue);
+
+                drpTransitions.Items.Clear();
+                drpTransitions.Items.Add(new ListItem("(select transition)", ""));
+
+                foreach (var trans in transitions)
                 {
-                    var transitions = JiraHelper.GetTransitions(Issue);
-
-                    drpTransitions.Items.Clear();
-                    drpTransitions.Items.Add(new ListItem("(select transition)", ""));
-
-                    foreach (var trans in transitions)
-                    {
-                        drpTransitions.Items.Add(new ListItem(trans.Value<string>("name"), trans.Value<string>("id")));
-                    }
+                    drpTransitions.Items.Add(new ListItem(trans.Value<string>("name"), trans.Value<string>("id")));
                 }
-                catch (Exception e)
-                {
-                    // Couldn't load transitions, probably because the previously selected issue no longer exists
-                    if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
-                    {
-                        drpTransitions.Items.Add(new ListItem("(saved value)", loadedValue));
-                    }
-                }
-
+            }
+            catch (Exception e)
+            {
+                // Couldn't load transitions, probably because the previously selected issue no longer exists
                 if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
                 {
-                    drpTransitions.SelectedValue = loadedValue;
+                    drpTransitions.Items.Add(new ListItem("(saved value)", loadedValue));
                 }
+            }
+
+            if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
+            {
+                drpTransitions.SelectedValue = loadedValue;
             }
         }
     }

@@ -50,6 +50,7 @@ namespace Kentico.Xperience.Jira.Controls
             {
                 disabledMetaFields.Add("description");
             }
+
             LoadIssueMetaFields();
         }
 
@@ -108,54 +109,61 @@ namespace Kentico.Xperience.Jira.Controls
 
         private void LoadIssueMetaFields()
         {
-            if(!String.IsNullOrEmpty(Project) && !String.IsNullOrEmpty(IssueType))
+            if(String.IsNullOrEmpty(Project) || String.IsNullOrEmpty(IssueType))
             {
-                var project = JiraHelper.GetProjectWithCreateSchema(Project, IssueType);
-                if (project != null)
+                return; 
+            }
+
+            var project = JiraHelper.GetProjectWithCreateSchema(Project, IssueType);
+            if (project == null)
+            {
+                ShowInformation("Selected project couldn't be found. Please select another.");
+                return;
+            }
+
+
+            var issueType = project.IssueTypes.Where(i => i.Id == IssueType).FirstOrDefault();
+            if (issueType == null)
+            {
+                ShowInformation("Issue type wasn't found in selected project.");
+                return;
+            }
+
+            CachedFields.Clear();
+            issueMetaPlaceholder.Controls.Clear();
+            var fields = issueType.GetFields();
+
+            foreach (var field in fields)
+            {
+                if (disabledMetaFields.Contains(field.Key))
                 {
-                    var issueType = project.IssueTypes.Where(i => i.Id == IssueType).FirstOrDefault();
-                    if (issueType != null)
+                    continue;
+                }
+
+                var control = field.MakeEditingControl();
+                if (control != null)
+                {
+                    issueMetaPlaceholder.Controls.Add(control);
+
+                    string uid;
+                    if (control is TextBoxWithPlaceholder)
                     {
-                        CachedFields.Clear();
-                        issueMetaPlaceholder.Controls.Clear();
-                        var fields = issueType.GetFields();
-
-                        foreach (var field in fields)
-                        {
-                            if (!disabledMetaFields.Contains(field.Key))
-                            {
-                                var control = field.MakeEditingControl();
-                                if (control != null)
-                                {
-                                    issueMetaPlaceholder.Controls.Add(control);
-
-                                    string uid;
-                                    if (control is TextBoxWithPlaceholder)
-                                    {
-                                        uid = (control as TextBoxWithPlaceholder).TextBox.UniqueID;
-                                    }
-                                    else
-                                    {
-                                        uid = control.UniqueID;
-                                    }
-                                    
-                                    field.ControlUID = uid;
-
-                                    CachedFields.Add(field);
-                                }
-                            }
-                        }
-
-                        if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
-                        {
-                            LoadExistingValue();
-                        }
+                        uid = (control as TextBoxWithPlaceholder).TextBox.UniqueID;
                     }
+                    else
+                    {
+                        uid = control.UniqueID;
+                    }
+
+                    field.ControlUID = uid;
+
+                    CachedFields.Add(field);
                 }
-                else
-                {
-                    ShowInformation("Selected project has no issue types. Please select another.");
-                }
+            }
+
+            if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
+            {
+                LoadExistingValue();
             }
         }
     }

@@ -15,19 +15,17 @@ namespace Kentico.Xperience.Jira.Workflow
             var issueId = JiraHelper.GetLinkedIssue(Node);
             var transition = GetResolvedParameter("Transition", "");
 
-            if (!String.IsNullOrEmpty(issueId) && !String.IsNullOrEmpty(transition))
+            if (String.IsNullOrEmpty(issueId) || String.IsNullOrEmpty(transition))
             {
-                var jiraHelper = new JiraHelper(User);
-                var comment = String.IsNullOrEmpty(Comment) ? $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}'" : Comment;
-                comment = this.MacroResolver.ResolveMacros(comment);
+                throw new NullReferenceException("Transition not found in workflow step configuration, or linked Jira issue not found in the document's custom data.");
+            }
 
-                jiraHelper.AddComment(issueId, comment);
-                jiraHelper.DoTransition(issueId, transition);
-            }
-            else
-            {
-                throw new NullReferenceException("Linked Jira issue not found in the document's custom data");
-            }
+            var jiraHelper = new JiraHelper(User);
+            var comment = String.IsNullOrEmpty(Comment) ? $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
+            comment = this.MacroResolver.ResolveMacros(comment);
+
+            jiraHelper.AddComment(issueId, comment);
+            jiraHelper.DoTransition(issueId, transition);
         }
     }
 }

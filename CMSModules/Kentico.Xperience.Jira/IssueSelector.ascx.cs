@@ -34,23 +34,25 @@ namespace Kentico.Xperience.Jira.Controls
 
         private void LoadIssues()
         {
-            if (!String.IsNullOrEmpty(Project))
+            if (String.IsNullOrEmpty(Project))
             {
-                drpIssues.Items.Clear();
-                drpIssues.Items.Add(new ListItem("(select issue)", ""));
+                return;
+            }
 
-                var issues = JiraHelper.GetIssues(Project, txtSearch.Text);
-                var orderedIssues = issues.OrderBy(i => i.Value<string>("summaryText"));
+            drpIssues.Items.Clear();
+            drpIssues.Items.Add(new ListItem("(select issue)", ""));
 
-                foreach (var issue in orderedIssues)
-                {
-                    drpIssues.Items.Add(new ListItem(issue.Value<string>("summaryText"), issue.Value<string>("id")));
-                }
+            var issues = JiraHelper.GetIssues(Project, txtSearch.Text);
+            var orderedIssues = issues.OrderBy(i => i.Value<string>("summaryText"));
 
-                if (drpIssues.Items.FindByValue(Issue) != null)
-                {
-                    drpIssues.SelectedValue = Issue;
-                }
+            foreach (var issue in orderedIssues)
+            {
+                drpIssues.Items.Add(new ListItem(issue.Value<string>("summaryText"), issue.Value<string>("id")));
+            }
+
+            if (drpIssues.Items.FindByValue(Issue) != null)
+            {
+                drpIssues.SelectedValue = Issue;
             }
         }
     }

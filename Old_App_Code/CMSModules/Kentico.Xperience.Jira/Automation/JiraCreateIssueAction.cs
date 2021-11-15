@@ -20,40 +20,38 @@ namespace Kentico.Xperience.Jira.Automation
             var issueType = GetResolvedParameter("IssueType", "");
             var metadata = GetResolvedParameter("MetaFields", "");
 
-            if (!String.IsNullOrEmpty(project) && !String.IsNullOrEmpty(issueType))
-            {
-                var metaFields = new Hashtable();
-                foreach (var pair in metadata.Split('|'))
-                {
-                    var values = pair.Split(';');
-                    metaFields[values[0]] = values[1];
-                }
-
-                // Create description
-                var contact = InfoObject as ContactInfo;
-                var description = "";
-                foreach (var key in contact.ColumnNames)
-                {
-                    var value = ValidationHelper.GetString(contact.GetProperty(key), "");
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        continue;
-                    }
-
-                    description += $"\\\\*{key}:* {value}";
-                }
-                metaFields["description"] = description;
-
-                var jiraHelper = new JiraHelper(User);
-                var response = jiraHelper.CreateIssue(metaFields, project, issueType, this.MacroResolver);
-                var createdIssue = JObject.Parse(response).Value<string>("id");
-
-                JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
-            }
-            else
+            if (String.IsNullOrEmpty(project) || String.IsNullOrEmpty(issueType))
             {
                 throw new NullReferenceException("Project or issue type was not found in the automation step configuration.");
             }
+
+            var metaFields = new Hashtable();
+            foreach (var pair in metadata.Split('|'))
+            {
+                var values = pair.Split(';');
+                metaFields[values[0]] = values[1];
+            }
+
+            // Create description
+            var contact = InfoObject as ContactInfo;
+            var description = "";
+            foreach (var key in contact.ColumnNames)
+            {
+                var value = ValidationHelper.GetString(contact.GetProperty(key), "");
+                if (String.IsNullOrEmpty(value))
+                {
+                    continue;
+                }
+
+                description += $"\\\\*{key}:* {value}";
+            }
+            metaFields["description"] = description;
+
+            var jiraHelper = new JiraHelper(User);
+            var response = jiraHelper.CreateIssue(metaFields, project, issueType, this.MacroResolver);
+            var createdIssue = JObject.Parse(response).Value<string>("id");
+
+            JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
         }
     }
 }

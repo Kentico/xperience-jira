@@ -4,6 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Kentico.Xperience.Jira.Events
 {
+    /// <summary>
+    /// Represents the event arguments of the <see cref="JiraWebhookHandler"/>.
+    /// </summary>
     public class WebhookTriggeredArgs : CMSEventArgs
     {
         /// <summary>

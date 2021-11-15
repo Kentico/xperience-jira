@@ -34,45 +34,30 @@ namespace Kentico.Xperience.Jira.Controls
 
         private void LoadProjectIssueTypes()
         {
-            if (!String.IsNullOrEmpty(Project))
+            if (String.IsNullOrEmpty(Project))
             {
-                var project = JiraHelper.GetProjectWithIssueTypes(Project);
-
-                drpIssueTypes.Items.Clear();
-                drpIssueTypes.Items.Add(new ListItem("(select issue type)", ""));
-
-                if (project != null)
-                {
-                    if (project.IssueTypes.Count() == 0)
-                    {
-                        Notify();
-                    }
-                    else
-                    {
-                        var orderedissueTypes = project.IssueTypes.OrderBy(i => i.Name);
-                        foreach (var i in orderedissueTypes)
-                        {
-                            drpIssueTypes.Items.Add(new ListItem(i.Name, i.Id));
-                        }
-
-                        if (drpIssueTypes.Items.FindByValue(IssueType) != null)
-                        {
-                            drpIssueTypes.SelectedValue = IssueType;
-                        }
-                    }
-                }
-                else
-                {
-                    Notify();
-                }
+                return;
             }
-        }
 
-        private void Notify()
-        {
-            if (!String.IsNullOrEmpty(Project))
+            drpIssueTypes.Items.Clear();
+            drpIssueTypes.Items.Add(new ListItem("(select issue type)", ""));
+
+            var project = JiraHelper.GetProjectWithIssueTypes(Project);
+            if (project == null || project.IssueTypes.Count() == 0)
             {
                 ShowInformation("Selected project has no issue types. Please select another.");
+                return;
+            }
+
+            var orderedissueTypes = project.IssueTypes.OrderBy(i => i.Name);
+            foreach (var i in orderedissueTypes)
+            {
+                drpIssueTypes.Items.Add(new ListItem(i.Name, i.Id));
+            }
+
+            if (drpIssueTypes.Items.FindByValue(IssueType) != null)
+            {
+                drpIssueTypes.SelectedValue = IssueType;
             }
         }
     }
