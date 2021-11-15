@@ -26,15 +26,15 @@ namespace Xperience.Jira
     {
         private static UserInfo mUser;
 
-        private static readonly string GET_PROJECTS = BaseUrl + "project",
-                                       GET_ISSUE_TYPES = BaseUrl + "issue/createmeta?projectIds={0}",
-                                       GET_ISSUE_CREATE_META = BaseUrl + "issue/createmeta?projectIds={0}&issuetypeIds={1}&expand=projects.issuetypes.fields",
-                                       GET_ISSUES = BaseUrl + "issue/picker?query={0}&currentProjectId={1}",
-                                       GET_TRANSITIONS = BaseUrl + "issue/{0}/transitions";
+        private readonly string DO_TRANSITION = BaseUrl + "issue/{0}/transitions";
+        private readonly string ADD_COMMENT = BaseUrl + "issue/{0}/comment";
+        private readonly string CREATE_POST = BaseUrl + "issue";
 
-        private readonly string DO_TRANSITION = BaseUrl + "issue/{0}/transitions",
-                                ADD_COMMENT = BaseUrl + "issue/{0}/comment",
-                                CREATE_POST = BaseUrl + "issue";
+        private static readonly string GET_PROJECTS = BaseUrl + "project";
+        private static readonly string GET_ISSUE_TYPES = BaseUrl + "issue/createmeta?projectIds={0}";
+        private static readonly string GET_ISSUE_CREATE_META = BaseUrl + "issue/createmeta?projectIds={0}&issuetypeIds={1}&expand=projects.issuetypes.fields";
+        private static readonly string GET_ISSUES = BaseUrl + "issue/picker?query={0}&currentProjectId={1}";
+        private static readonly string GET_TRANSITIONS = BaseUrl + "issue/{0}/transitions";
 
         #region Properties
 

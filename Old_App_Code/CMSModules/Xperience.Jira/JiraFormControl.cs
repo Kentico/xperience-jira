@@ -12,11 +12,11 @@ namespace Xperience.Jira
     /// </summary>
     public class JiraFormControl : FormEngineUserControl
     {
-        public override object Value { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private readonly string CONTROL_UID_PROJECT = "JiraCachedProjectUid";
+        private readonly string CONTROL_UID_ISSUE = "JiraCachedIssueUid";
+        private readonly string CONTROL_UID_ISSUETYPE = "JiraCachedIssueTypeUid";
 
-        private readonly string CONTROL_UID_PROJECT = "JiraCachedProjectUid",
-                                CONTROL_UID_ISSUE = "JiraCachedIssueUid",
-                                CONTROL_UID_ISSUETYPE = "JiraCachedIssueTypeUid";
+        public override object Value { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         /// <summary>
         /// Gets or sets a Jira project ID provided by a <see cref="ProjectSelector"/>. During postbacks,
