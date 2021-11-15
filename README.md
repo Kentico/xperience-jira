@@ -8,7 +8,7 @@ This package contains custom [Workflow](https://docs.xperience.io/managing-websi
 
 1. Download the export package located in the [/CMSSiteUtils/Export](/CMSSiteUtils/Export) folder
 2. In the __Sites application__, [import](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects) the package with __Import files__ and __Import code files__ checked
-3. Follow [these instructions](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects#Importingasiteorobjects-Importingpackageswithfiles) to include the imported _/CMSModules/Xperience.Jira_ and _/Old_App_Code/CMSModules/Xperience.Jira_ folders in your project
+3. Follow [these instructions](https://docs.xperience.io/deploying-websites/exporting-and-importing-sites/importing-a-site-or-objects#Importingasiteorobjects-Importingpackageswithfiles) to include the imported _/CMSModules/Kentico.Xperience.Jira_ and _/Old_App_Code/CMSModules/Kentico.Xperience.Jira_ folders in your project
 4. Build the CMS project
 
 ### Enabling the integration
