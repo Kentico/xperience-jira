@@ -12,19 +12,19 @@ namespace Kentico.Xperience.Jira.Controls
     /// <summary>
     /// A form control which dynamically generates controls to populate a Jira issue's custom fields.
     /// Relies on a <see cref="ProjectSelector"/> and <see cref="IssueTypeSelector"/> to be present in
-    /// the same form
+    /// the same form.
     /// </summary>
     public partial class MetaFieldInputs : JiraFormControl
     {
         private string loadedValue;
 
         /// <summary>
-        /// Meta fields to hide from the dynamically generated issue fields
+        /// Meta fields to hide from the dynamically generated issue fields.
         /// </summary>
         private List<string> disabledMetaFields = new List<string>() { "issuetype", "project", "attachment" };
 
         /// <summary>
-        /// The fields of the selected Jira issue type which were added to the dynamic layout
+        /// The fields of the selected Jira issue type which were added to the dynamic layout.
         /// </summary>
         private List<JiraIssueField> CachedFields
         {
@@ -54,7 +54,7 @@ namespace Kentico.Xperience.Jira.Controls
         }
 
         /// <summary>
-        /// Constructs the value to be saved to the database by checking Request.Form
+        /// Constructs the value to be saved to the database by checking Request.Form.
         /// </summary>
         /// <returns></returns>
         private string MakeValue()
@@ -75,7 +75,7 @@ namespace Kentico.Xperience.Jira.Controls
         }
 
         /// <summary>
-        /// Populates the dynamic meta fields with data from the database
+        /// Populates the dynamic meta fields with data from the database.
         /// </summary>
         /// <param name="value"></param>
         private void LoadExistingValue()
@@ -154,7 +154,7 @@ namespace Kentico.Xperience.Jira.Controls
                 }
                 else
                 {
-                    ShowInformation("Selected project has no issue types. Please select another");
+                    ShowInformation("Selected project has no issue types. Please select another.");
                 }
             }
         }

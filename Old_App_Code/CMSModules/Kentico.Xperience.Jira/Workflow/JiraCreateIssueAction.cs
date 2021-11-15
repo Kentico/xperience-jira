@@ -8,7 +8,7 @@ namespace Kentico.Xperience.Jira.Workflow
     /// <summary>
     /// A workflow action which creates a new issue in Jira. The created issue
     /// and its project are linked to the <see cref="TreeNode"/> via
-    /// <see cref="JiraHelper.LinkJiraIssue(CMS.DataEngine.BaseInfo, string, string)"
+    /// <see cref="JiraHelper.LinkJiraIssue(CMS.DataEngine.BaseInfo, string, string)"/>.
     /// </summary>
     public class JiraCreateIssueAction : DocumentWorkflowAction
     {

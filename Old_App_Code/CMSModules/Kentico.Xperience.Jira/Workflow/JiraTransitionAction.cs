@@ -6,7 +6,7 @@ namespace Kentico.Xperience.Jira.Workflow
     /// <summary>
     /// A workflow action which moves a Jira issue to a new workflow step. Logs a new
     /// Jira comment to the issue if the Xperience user provided a comment, or logs a default
-    /// comment
+    /// comment.
     /// </summary>
     public class JiraTransitionAction : DocumentWorkflowAction
     {

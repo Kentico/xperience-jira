@@ -20,7 +20,7 @@ namespace Kentico.Xperience.Jira
 {
     /// <summary>
     /// Provides methods for interfacing with the Jira REST API as well as other
-    /// Jira-related tasks
+    /// Jira-related tasks.
     /// </summary>
     public class JiraHelper
     {
@@ -40,7 +40,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// The key for storing and retriving an object's linked Jira webhook
-        /// ID from its custom data column
+        /// ID from its custom data column.
         /// </summary>
         public static string LinkedWebhookKey
         {
@@ -52,7 +52,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// The key for storing and retriving an object's linked Jira project
-        /// ID from its custom data column
+        /// ID from its custom data column.
         /// </summary>
         public static string LinkedProjectKey
         {
@@ -64,7 +64,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// The key for storing and retriving an object's linked Jira issue
-        /// ID from its custom data column
+        /// ID from its custom data column.
         /// </summary>
         public static string LinkedIssueKey
         {
@@ -76,7 +76,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// A macro that can be used within webhook scopes that is replaced
-        /// by the object's linked issue
+        /// by the object's linked issue.
         /// </summary>
         public static string LinkedIssueMacro
         {
@@ -88,7 +88,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// A macro that can be used within webhook scopes that is replaced
-        /// by the object's linked project
+        /// by the object's linked project.
         /// </summary>
         public static string LinkedProjectMacro
         {
@@ -99,7 +99,7 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// The Jira server domain and path for standard Jira REST requests
+        /// The Jira server domain and path for standard Jira REST requests.
         /// </summary>
         public static string BaseUrl
         {
@@ -111,7 +111,7 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// The Jira server domain and path for Jira webhook REST requests
+        /// The Jira server domain and path for Jira webhook REST requests.
         /// </summary>
         public static string WebhookBaseUrl
         {
@@ -125,7 +125,7 @@ namespace Kentico.Xperience.Jira
         /// <summary>
         /// Returns the Base64 converted email and API token for the REST API Authorization header.
         /// Attempts to get the email address and API token from the set <see cref="User"/> which
-        /// defaults to the Global Administrator
+        /// defaults to the Global Administrator.
         /// </summary>
         private static string BasicAuthorization
         {
@@ -152,7 +152,7 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// Returns whether the Jira integration is enabled in the Xperience Settings application
+        /// Returns whether the Jira integration is enabled in the Xperience Settings application.
         /// </summary>
         private bool IsEnabled
         {
@@ -165,7 +165,7 @@ namespace Kentico.Xperience.Jira
         /// <summary>
         /// The user in which Jira operations are performed. Only pertinent for POST operations in which
         /// the correct Jira user should be displayed in issue history. For GET operations, the user can
-        /// be anyone with the proper permissions
+        /// be anyone with the proper permissions.
         /// </summary>
         private static UserInfo User
         {
@@ -186,6 +186,12 @@ namespace Kentico.Xperience.Jira
             }
         }
 
+        /// <summary>
+        /// Constructor required for non-static method which depend on the provided <paramref name="user"/>
+        /// to reflect the appropriate Jira accounts in issues and comments.
+        /// </summary>
+        /// <param name="user">The Xperience user whose Jira credentials will be used during any API action.
+        /// If null, the default Global Administrator account will be used.</param>
         public JiraHelper(UserInfo user = null)
         {
             User = user;
@@ -197,9 +203,8 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// Returns a list of Jira projects. The returned <see cref="JiraProject"/> objects
-        /// do not contain <see cref="JiraIssueType"/> objects or their schemas
+        /// do not contain <see cref="JiraIssueType"/> objects or their schemas.
         /// </summary>
-        /// <returns></returns>
         public static IEnumerable<JiraProject> GetProjects()
         {
             var response = DoRequest(GET_PROJECTS, HttpMethod.Get);
@@ -207,56 +212,53 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// Returns a list of valid workflow transitions for the provided issue
+        /// Returns a list of valid workflow transitions for the provided issue.
         /// </summary>
-        /// <param name="issue"></param>
-        /// <returns></returns>
-        public static JArray GetTransitions(string issue)
+        /// <param name="issueId">The internal ID of the issue to return transitions for.</param>
+        public static JArray GetTransitions(string issueId)
         {
-            var url = string.Format(GET_TRANSITIONS, issue);
+            var url = string.Format(GET_TRANSITIONS, issueId);
             var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
             return response.Value<JArray>("transitions");
         }
 
         /// <summary>
-        /// Returns a list of Jira issues within the project which match the query
+        /// Returns a list of Jira issues within the project which match the query.
         /// </summary>
-        /// <param name="project"></param>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static JToken[] GetIssues(string project, string query)
+        /// <param name="projectId">The internal ID of the project to query issues of.</param>
+        /// <param name="query">The text to search within summaries and descriptions of issues.</param>
+        public static JToken[] GetIssues(string projectId, string query)
         {
-            var url = string.Format(GET_ISSUES, query, project);
+            var url = string.Format(GET_ISSUES, query, projectId);
             var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
             return response.SelectToken("$.sections[0].issues").ToArray();
         }
 
         /// <summary>
-        /// Returns a list of Jira projects. The returned <see cref="JiraProject"/> objects
-        /// contain <see cref="JiraIssueType"/> objects and their schemas
+        /// Returns a project with the schema required to create a new issue of the specified type.
         /// </summary>
-        /// <returns></returns>
-        public static JiraProject GetProjectWithCreateSchema(string project, string issueType)
+        /// <param name="projectId">The internal project ID of the project to retrieve.</param>
+        /// <param name="issueTypeId">The internal ID of the issue type to retrieve the schema for.</param>
+        public static JiraProject GetProjectWithCreateSchema(string projectId, string issueTypeId)
         {
-            var url = string.Format(GET_ISSUE_CREATE_META, project, issueType);
+            var url = string.Format(GET_ISSUE_CREATE_META, projectId, issueTypeId);
             var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
             var projectsArray = response.Value<JArray>("projects");
             var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(projectsArray.ToString());
-            return projects.Where(p => p.Id == project).FirstOrDefault();
+            return projects.Where(p => p.Id == projectId).FirstOrDefault();
         }
 
         /// <summary>
-        /// Returns a Jira project with its issue types
+        /// Returns a Jira project with its issue types.
         /// </summary>
-        /// <param name="project"></param>
-        /// <returns></returns>
-        public static JiraProject GetProjectWithIssueTypes(string project)
+        /// <param name="projectId">The internal ID of the project to retrieve.</param>
+        public static JiraProject GetProjectWithIssueTypes(string projectId)
         {
-            var url = string.Format(GET_ISSUE_TYPES, project);
+            var url = string.Format(GET_ISSUE_TYPES, projectId);
             var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
             var projectToken = response.SelectToken("$.projects");
             var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(JsonConvert.SerializeObject(projectToken));
-            return projects.Where(p => p.Id == project).FirstOrDefault();
+            return projects.Where(p => p.Id == projectId).FirstOrDefault();
         }
 
         #endregion
@@ -266,35 +268,38 @@ namespace Kentico.Xperience.Jira
         /// <summary>
         /// Attempts to transition a Jira issue to a new workflow step. This may fail
         /// if the Jira issue has been moved into a workflow step in which the transition
-        /// is no longer valid
+        /// is no longer valid.
         /// </summary>
-        /// <param name="issue"></param>
-        /// <param name="transition"></param>
-        /// <returns></returns>
-        public string DoTransition(string issue, string transition)
+        /// <param name="issueId">The internal ID of the issue to transition.</param>
+        /// <param name="transitionId">The internal ID of the transition to use.</param>
+        public void DoTransition(string issueId, string transitionId)
         {
             if (!IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled");
+                throw new Exception("Jira integration is not enabled.");
             }
 
-            var data = $"{{ transition: {{ id:\"{transition}\" }} }}";
+            var data = $"{{ transition: {{ id:\"{transitionId}\" }} }}";
             var obj = JsonConvert.DeserializeObject<JObject>(data);
-            var url = string.Format(DO_TRANSITION, issue);
+            var url = string.Format(DO_TRANSITION, issueId);
 
-            return DoRequest(url, HttpMethod.Post, obj);
+            DoRequest(url, HttpMethod.Post, obj);
         }
 
         /// <summary>
         /// Creates a new Jira webhook which triggers on the specified event(s) if the event
         /// meets optional filters specified in the scope. When the webhook is triggered, the
-        /// request will be sent to the <see cref="JiraWebhookController"/>
+        /// request will be sent to the <see cref="JiraWebhookController"/>.
         /// </summary>
-        /// <param name="infoObj"></param>
-        /// <param name="name"></param>
-        /// <param name="events"></param>
-        /// <param name="scope"></param>
-        /// <returns></returns>
+        /// <param name="infoObj">The Xperience object which triggered webhook creation and contains
+        /// Jira issue and project information in a database column.</param>
+        /// <param name="name">The display name for the created webhook.</param>
+        /// <param name="events">One or more events which will cause the webhook to trigger.
+        /// See <see href="https://developer.atlassian.com/server/jira/platform/webhooks/#registering-events-for-a-webhook"/>.</param>
+        /// <param name="scope">One or more filters which are used to restrict when the webhook triggers.
+        /// See <see href="https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ConstructingJQLqueries"/>.</param>
+        /// <returns>The response from the Jira server after webhook creation, containing information
+        /// about the created webhook.</returns>
         public static string CreateWebhook(BaseInfo infoObj, string name, string events, string scope)
         {
             var data = $"{{ name: '{name}', url: '{GetCallbackUrl(infoObj)}', excludeBody: false }}";
@@ -342,45 +347,45 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// Creates a new comment on a Jira issue using the identity of the <see cref="User"/>
+        /// Creates a new comment on a Jira issue using the identity of the <see cref="User"/>.
         /// </summary>
-        /// <param name="issue"></param>
-        /// <param name="comment"></param>
-        /// <returns></returns>
-        public string AddComment(string issue, string comment)
+        /// <param name="issueId">The internal ID of the issue to comment on.</param>
+        /// <param name="comment">The comment to add to the issue.</param>
+        public void AddComment(string issueId, string comment)
         {
             if (!IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled");
+                throw new Exception("Jira integration is not enabled.");
             }
 
             comment = HttpUtility.JavaScriptStringEncode(HTMLHelper.HTMLDecode(comment));
 
             var data = JObject.Parse($"{{ body:\"{comment}\" }}");
-            var url = string.Format(ADD_COMMENT, issue);
-            return DoRequest(url, HttpMethod.Post, data);
+            var url = string.Format(ADD_COMMENT, issueId);
+            DoRequest(url, HttpMethod.Post, data);
         }
 
         /// <summary>
-        /// Creates a new issue in Jira
+        /// Creates a new issue in Jira.
         /// </summary>
-        /// <param name="metaFields">The fields of the issue to be set</param>
-        /// <param name="project">The project ID to create the issue under</param>
-        /// <param name="issueType">The ID of the issue type to create</param>
-        /// <param name="resolver">A resolver used to resolve macros in the metadata</param>
-        /// <returns></returns>
-        public string CreateIssue(Hashtable metaFields, string project, string issueType, MacroResolver resolver)
+        /// <param name="metaFields">The fields of the issue to be set.</param>
+        /// <param name="projectId">The internal project ID to create the issue under.</param>
+        /// <param name="issueTypeId">The internal ID of the issue type to create.</param>
+        /// <param name="resolver">A resolver used to resolve macros in the metadata.</param>
+        /// <returns>The response from the Jira server after the issue is created, containing
+        /// information about the created issue.</returns>
+        public string CreateIssue(Hashtable metaFields, string projectId, string issueTypeId, MacroResolver resolver)
         {
             if (!IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled");
+                throw new Exception("Jira integration is not enabled.");
             }
 
-            var data = $"{{ fields: {{ project: {{ id: \"{project}\" }}, issuetype: {{id: \"{issueType}\" }} }}";
+            var data = $"{{ fields: {{ project: {{ id: \"{projectId}\" }}, issuetype: {{id: \"{issueTypeId}\" }} }}";
             var obj = JsonConvert.DeserializeObject<JObject>(data);
 
-            var selectedProject = GetProjectWithCreateSchema(project, issueType);
-            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
+            var selectedProject = GetProjectWithCreateSchema(projectId, issueTypeId);
+            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueTypeId).FirstOrDefault().GetFields();
 
             foreach (string key in metaFields.Keys)
             {
@@ -416,14 +421,13 @@ namespace Kentico.Xperience.Jira
         #region DELETE methods
 
         /// <summary>
-        /// Deletes a Jira webhook
+        /// Deletes a Jira webhook.
         /// </summary>
-        /// <param name="webhook"></param>
-        /// <returns></returns>
-        public static string DeleteWebhook(string webhook)
+        /// <param name="webhookId">The internal ID of the webhook to delete.</param>
+        public static void DeleteWebhook(string webhookId)
         {
-            var url = WebhookBaseUrl + $"/{webhook}";
-            return DoRequest(url, HttpMethod.Delete);
+            var url = WebhookBaseUrl + $"/{webhookId}";
+            DoRequest(url, HttpMethod.Delete);
         }
 
         #endregion
@@ -462,7 +466,7 @@ namespace Kentico.Xperience.Jira
                     }
                     else
                     {
-                        throw new Exception($"Error posting to {url}: {content}");
+                        throw new Exception($"Error posting to {url}: {content}.");
                     }
                 }
             }
@@ -487,67 +491,69 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// Adds Jira issue and project info to a TreeNode's <see cref="TreeNode.DocumentCustomData"/>
-        /// or an automation's <see cref="AutomationStateInfo.StateCustomData"/>
+        /// or an automation's <see cref="AutomationStateInfo.StateCustomData"/>.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="issue"></param>
-        /// <param name="project"></param>
-        public static void LinkJiraIssue(BaseInfo obj, string issue, string project)
+        /// <param name="infoObj">The Xperience object which contains a custom data column to store
+        /// Jira information within.</param>
+        /// <param name="issueId">The internal ID of the issue to store in the object.</param>
+        /// <param name="projectId">The internal ID of the project to store in the object.</param>
+        public static void LinkJiraIssue(BaseInfo infoObj, string issueId, string projectId)
         {
-            if (obj is AutomationStateInfo)
+            if (infoObj is AutomationStateInfo)
             {
-                var state = obj as AutomationStateInfo;
-                state.StateCustomData[LinkedIssueKey] = issue;
-                state.StateCustomData[LinkedProjectKey] = project;
+                var state = infoObj as AutomationStateInfo;
+                state.StateCustomData[LinkedIssueKey] = issueId;
+                state.StateCustomData[LinkedProjectKey] = projectId;
                 state.Update();
             }
-            if (obj is TreeNode)
+            if (infoObj is TreeNode)
             {
-                var node = obj as TreeNode;
-                node.DocumentCustomData[LinkedIssueKey] = issue;
-                node.DocumentCustomData[LinkedProjectKey] = project;
+                var node = infoObj as TreeNode;
+                node.DocumentCustomData[LinkedIssueKey] = issueId;
+                node.DocumentCustomData[LinkedProjectKey] = projectId;
                 node.Update();
             }
         }
 
         /// <summary>
         /// Adds a Jira webhook ID to a TreeNode's <see cref="TreeNode.DocumentCustomData"/>
-        /// or an automation's <see cref="AutomationStateInfo.StateCustomData"/>
+        /// or an automation's <see cref="AutomationStateInfo.StateCustomData"/>.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="issue"></param>
-        /// <param name="project"></param>
-        public static void LinkJiraWebhook(BaseInfo obj, string webhook)
+        /// <param name="infoObj">The Xperience object which contains a custom data column to store
+        /// Jira information within.</param>
+        /// <param name="webhookId">The internal ID of the webhook to store in the object.</param>
+        public static void LinkJiraWebhook(BaseInfo infoObj, string webhookId)
         {
-            if (obj is AutomationStateInfo)
+            if (infoObj is AutomationStateInfo)
             {
-                var state = obj as AutomationStateInfo;
-                state.StateCustomData[LinkedWebhookKey] = webhook;
+                var state = infoObj as AutomationStateInfo;
+                state.StateCustomData[LinkedWebhookKey] = webhookId;
                 state.Update();
             }
-            if (obj is TreeNode)
+            if (infoObj is TreeNode)
             {
-                var node = obj as TreeNode;
-                node.DocumentCustomData[LinkedWebhookKey] = webhook;
+                var node = infoObj as TreeNode;
+                node.DocumentCustomData[LinkedWebhookKey] = webhookId;
                 node.Update();
             }
         }
 
         /// <summary>
-        /// Returns the Jira webhook ID that is linked to the object
+        /// Returns the Jira webhook ID that is linked to the object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static string GetLinkedWebhook(BaseInfo obj)
+        /// <param name="infoObj">The Xperience object which contains a custom data column storing
+        /// a Jira webhook ID.</param>
+        /// <returns>A Jira webhook ID, or null.</returns>
+        public static string GetLinkedWebhook(BaseInfo infoObj)
         {
-            if (obj is AutomationStateInfo)
+            if (infoObj is AutomationStateInfo)
             {
-                var state = obj as AutomationStateInfo;
+                var state = infoObj as AutomationStateInfo;
                 return ValidationHelper.GetString(state.StateCustomData[LinkedWebhookKey], "");
             }
-            if (obj is TreeNode)
+            if (infoObj is TreeNode)
             {
-                var node = obj as TreeNode;
+                var node = infoObj as TreeNode;
                 return ValidationHelper.GetString(node.DocumentCustomData[LinkedWebhookKey], "");
             }
 
@@ -555,20 +561,21 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// Returns the Jira issue ID that is linked to the object
+        /// Returns the Jira issue ID that is linked to the object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static string GetLinkedIssue(BaseInfo obj)
+        /// <param name="infoObj">The Xperience object which contains a custom data column storing
+        /// a Jira issue ID.</param>
+        /// <returns>A Jira issue ID, or null.</returns>
+        public static string GetLinkedIssue(BaseInfo infoObj)
         {
-            if (obj is AutomationStateInfo)
+            if (infoObj is AutomationStateInfo)
             {
-                var state = obj as AutomationStateInfo;
+                var state = infoObj as AutomationStateInfo;
                 return ValidationHelper.GetString(state.StateCustomData[LinkedIssueKey], "");
             }
-            if (obj is TreeNode)
+            if (infoObj is TreeNode)
             {
-                var node = obj as TreeNode;
+                var node = infoObj as TreeNode;
                 return ValidationHelper.GetString(node.DocumentCustomData[LinkedIssueKey], "");
             }
 
@@ -576,20 +583,21 @@ namespace Kentico.Xperience.Jira
         }
 
         /// <summary>
-        /// Returns the Jira project ID that is linked to the object
+        /// Returns the Jira project ID that is linked to the object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static string GetLinkedProject(BaseInfo obj)
+        /// <param name="infoObj">The Xperience object which contains a custom data column storing
+        /// a Jira project ID.</param>
+        /// <returns>A Jira project ID, or null.</returns>
+        public static string GetLinkedProject(BaseInfo infoObj)
         {
-            if (obj is AutomationStateInfo)
+            if (infoObj is AutomationStateInfo)
             {
-                var state = obj as AutomationStateInfo;
+                var state = infoObj as AutomationStateInfo;
                 return ValidationHelper.GetString(state.StateCustomData[LinkedProjectKey], "");
             }
-            if (obj is TreeNode)
+            if (infoObj is TreeNode)
             {
-                var node = obj as TreeNode;
+                var node = infoObj as TreeNode;
                 return ValidationHelper.GetString(node.DocumentCustomData[LinkedProjectKey], "");
             }
 

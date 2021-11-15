@@ -6,7 +6,7 @@ using System.Web.UI.WebControls;
 namespace Kentico.Xperience.Jira.Controls
 {
     /// <summary>
-    /// A form control for selecting a Jira project
+    /// A form control for selecting a Jira project.
     /// </summary>
     public partial class ProjectSelector : JiraFormControl
     {

@@ -7,7 +7,7 @@ using CMS.DataEngine;
 namespace Kentico.Xperience.Jira
 {
     /// <summary>
-    /// Registers the routes for <see cref="JiraWebhookController"/>
+    /// Registers the routes for <see cref="JiraWebhookController"/>.
     /// </summary>
     public class JiraModule : Module
     {

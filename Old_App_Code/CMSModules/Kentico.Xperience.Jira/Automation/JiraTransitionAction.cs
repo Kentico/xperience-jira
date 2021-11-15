@@ -7,7 +7,7 @@ namespace Kentico.Xperience.Jira.Automation
     /// <summary>
     /// A Marketing automation action which moves a Jira issue to a new workflow step. Logs a
     /// new Jira comment to the issue if the Xperience user provided a comment, or logs a default
-    /// comment
+    /// comment.
     /// </summary>
     public class JiraTransitionAction : AutomationAction
     {
@@ -19,7 +19,7 @@ namespace Kentico.Xperience.Jira.Automation
             if (!String.IsNullOrEmpty(issueId) && !String.IsNullOrEmpty(transition))
             {
                 var user = User;
-                var comment = $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}'";
+                var comment = $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}.'";
 
                 // Get user and comment from history
                 var previousStepHistoryId = AutomationManager.GetPreviousStepInfo(InfoObject, StateObject).RelatedHistoryID;
@@ -41,7 +41,7 @@ namespace Kentico.Xperience.Jira.Automation
             }
             else
             {
-                throw new NullReferenceException("Linked Jira issue not found in the automation state's custom data");
+                throw new NullReferenceException("Linked Jira issue not found in the automation state's custom data.");
             }
         }
     }

@@ -8,7 +8,7 @@ namespace Kentico.Xperience.Jira
 {
     /// <summary>
     /// A class ensuring that multiple Jira-related controls can be used on the same form and retrieve
-    /// each others values appropriately
+    /// each others values appropriately.
     /// </summary>
     public class JiraFormControl : FormEngineUserControl
     {
@@ -92,7 +92,7 @@ namespace Kentico.Xperience.Jira
 
         /// <summary>
         /// Saves the current control's unique ID to session so that the submitted form value
-        /// can be found on postback
+        /// can be found on postback.
         /// </summary>
         /// <param name="uid"></param>
         protected void SaveControlUniqueId(string uid)

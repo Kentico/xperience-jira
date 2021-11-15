@@ -16,7 +16,7 @@ using Kentico.Xperience.Jira.Events;
 namespace Kentico.Xperience.Jira
 {
     /// <summary>
-    /// A Web API controller for handling webhook POSTS from Jira
+    /// A Web API controller for handling webhook POSTS from Jira.
     /// </summary>
     public class JiraWebhookController : ApiController
     {
@@ -27,13 +27,12 @@ namespace Kentico.Xperience.Jira
         /// <remarks>
         /// The default functionality of this
         /// endpoint moves the corresponding object to the next step in its workflow, but the functionality
-        /// can be modified by registering a custom <see cref="JiraEvents.WebhookTriggered"/> handler
+        /// can be modified by registering a custom <see cref="JiraEvents.WebhookTriggered"/> handler.
         /// </remarks>
-        /// <param name="type">The object class name that was registered during creation of the webhook</param>
-        /// <param name="issue">The ID of the Jira issue which triggered the webhook</param>
-        /// <returns></returns>
+        /// <param name="type">The object class name that was registered during creation of the webhook.</param>
+        /// <param name="issueId">The internal ID of the Jira issue which triggered the webhook.</param>
         [HttpPost]
-        public HttpResponseMessage Run(string type, string issue)
+        public HttpResponseMessage Run(string type, string issueId)
         {
             var deleteWebhook = SettingsKeyInfoProvider.GetBoolValue("JiraDeleteWebhooks");
             var content = JObject.Parse(Request.Content.ReadAsStringAsync().Result);
@@ -41,14 +40,14 @@ namespace Kentico.Xperience.Jira
             BaseInfo infoObj = null;
             if (type.ToLower() == TreeNode.TYPEINFO.ObjectClassName.ToLower())
             {
-                infoObj = GetRelatedTreeNode(issue);
+                infoObj = GetRelatedTreeNode(issueId);
             }
             else if (type.ToLower() == AutomationStateInfo.TYPEINFO.ObjectClassName.ToLower())
             {
-                infoObj = GetRelatedAutomationState(issue);
+                infoObj = GetRelatedAutomationState(issueId);
             }
 
-            using (var h = JiraEvents.WebhookTriggered.StartEvent(content, infoObj, issue))
+            using (var h = JiraEvents.WebhookTriggered.StartEvent(content, infoObj, issueId))
             {
                 if (h.CanContinue())
                 {

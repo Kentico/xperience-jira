@@ -7,7 +7,7 @@ namespace Kentico.Xperience.Jira.Controls
 {
     /// <summary>
     /// A form control for selecting a Jira issue type. Relies on a <see cref="ProjectSelector"/> to
-    /// be present in the same form
+    /// be present in the same form.
     /// </summary>
     public partial class IssueTypeSelector : JiraFormControl
     {
@@ -72,7 +72,7 @@ namespace Kentico.Xperience.Jira.Controls
         {
             if (!String.IsNullOrEmpty(Project))
             {
-                ShowInformation("Selected project has no issue types. Please select another");
+                ShowInformation("Selected project has no issue types. Please select another.");
             }
         }
     }

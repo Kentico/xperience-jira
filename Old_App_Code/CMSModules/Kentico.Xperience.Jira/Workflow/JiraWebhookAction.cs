@@ -6,7 +6,7 @@ using System.Linq;
 namespace Kentico.Xperience.Jira.Workflow
 {
     /// <summary>
-    /// A workflow action which creates a Jira webhook
+    /// A workflow action which creates a Jira webhook.
     /// </summary>
     public class JiraWebhookAction : DocumentWorkflowAction
     {

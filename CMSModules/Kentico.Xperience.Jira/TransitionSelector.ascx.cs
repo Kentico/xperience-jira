@@ -7,7 +7,7 @@ namespace Kentico.Xperience.Jira.Controls
     /// <summary>
     /// A form control for selecting a Jira workflow transition. Relies on an <see cref="IssueSelector"/> to
     /// be present in the same form, as the only way to get transitions from the Jira API is to provide an
-    /// existing issue
+    /// existing issue.
     /// </summary>
     public partial class TransitionSelector : JiraFormControl
     {

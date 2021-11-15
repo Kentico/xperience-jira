@@ -7,7 +7,7 @@ namespace Kentico.Xperience.Jira.Controls
 {
     /// <summary>
     /// A form control for selecting a Jira issue. Relies on a <see cref="ProjectSelector"/> to
-    /// be present in the same form
+    /// be present in the same form.
     /// </summary>
     public partial class IssueSelector : JiraFormControl
     {

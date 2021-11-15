@@ -10,7 +10,7 @@ namespace Kentico.Xperience.Jira.Automation
     /// <summary>
     /// A Marketing automation action which creates a new issue in Jira. The created issue
     /// and its project are linked to the <see cref="AutomationStateInfo"/> via
-    /// <see cref="JiraHelper.LinkJiraIssue(CMS.DataEngine.BaseInfo, string, string)"
+    /// <see cref="JiraHelper.LinkJiraIssue(CMS.DataEngine.BaseInfo, string, string)"/>.
     /// </summary>
     public class JiraCreateIssueAction : AutomationAction
     {

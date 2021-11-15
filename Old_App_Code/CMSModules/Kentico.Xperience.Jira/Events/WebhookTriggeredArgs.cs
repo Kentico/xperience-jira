@@ -7,7 +7,7 @@ namespace Kentico.Xperience.Jira.Events
     public class WebhookTriggeredArgs : CMSEventArgs
     {
         /// <summary>
-        /// The object which has been linked to the specified Jira issue
+        /// The object which has been linked to the specified Jira issue.
         /// </summary>
         public BaseInfo InfoObject
         {
@@ -16,7 +16,7 @@ namespace Kentico.Xperience.Jira.Events
         }
 
         /// <summary>
-        /// The body of the request from a Jira webhook POST
+        /// The body of the request from a Jira webhook POST.
         /// </summary>
         public JObject Content
         {
@@ -25,7 +25,7 @@ namespace Kentico.Xperience.Jira.Events
         }
 
         /// <summary>
-        /// The ID of the Jira issue which triggered the webhook
+        /// The ID of the Jira issue which triggered the webhook.
         /// </summary>
         public string Issue
         {

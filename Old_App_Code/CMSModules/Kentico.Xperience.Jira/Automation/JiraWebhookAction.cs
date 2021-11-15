@@ -6,7 +6,7 @@ using System.Linq;
 namespace Kentico.Xperience.Jira.Automation
 {
     /// <summary>
-    /// A Marketing automation action which creates a Jira webhook
+    /// A Marketing automation action which creates a Jira webhook.
     /// </summary>
     public class JiraWebhookAction : AutomationAction
     {
