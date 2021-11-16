@@ -21,11 +21,12 @@ namespace Kentico.Xperience.Jira.Workflow
                 throw new NullReferenceException("Webhook name or event was not found in the workflow step configuration.");
             }
 
-            var response = JiraHelper.CreateWebhook(Node, name, events, scope);
+            var response = JiraApiHelper.CreateWebhook(Node, name, events, scope);
 
             var webhook = JObject.Parse(response);
             var uri = new Uri(webhook.Value<string>("self"));
             var id = uri.Segments.Last();
+
             JiraHelper.LinkJiraWebhook(Node, id);
         }
     }

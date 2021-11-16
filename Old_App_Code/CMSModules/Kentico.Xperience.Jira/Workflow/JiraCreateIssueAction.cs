@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Kentico.Xperience.Jira.Workflow
 {
@@ -23,15 +24,12 @@ namespace Kentico.Xperience.Jira.Workflow
                 throw new NullReferenceException("Project or issue type was not found in the workflow step configuration.");
             }
 
-            var metaFields = new Hashtable();
-            foreach (var pair in metadata.Split('|'))
-            {
-                var values = pair.Split(';');
-                metaFields[values[0]] = values[1];
-            }
+            // Convert stored metadata string into properties for creation
+            var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
+            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
+            var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
 
-            var jiraHelper = new JiraHelper(User);
-            var response = jiraHelper.CreateIssue(metaFields, project, issueType, this.MacroResolver);
+            var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
             var createdIssue = JObject.Parse(response).Value<string>("id");
 
             JiraHelper.LinkJiraIssue(Node, createdIssue, project);
@@ -39,7 +37,7 @@ namespace Kentico.Xperience.Jira.Workflow
             // Get workflow comment
             var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
             comment = this.MacroResolver.ResolveMacros(comment);
-            jiraHelper.AddComment(createdIssue, comment);
+            JiraApiHelper.AddComment(createdIssue, comment, User);
         }
     }
 }

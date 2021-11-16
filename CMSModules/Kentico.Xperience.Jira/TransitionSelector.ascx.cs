@@ -39,7 +39,7 @@ namespace Kentico.Xperience.Jira.Controls
 
             try
             {
-                var transitions = JiraHelper.GetTransitions(Issue);
+                var transitions = JiraApiHelper.GetTransitions(Issue);
 
                 drpTransitions.Items.Clear();
                 drpTransitions.Items.Add(new ListItem("(select transition)", ""));

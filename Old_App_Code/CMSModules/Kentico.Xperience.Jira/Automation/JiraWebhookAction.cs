@@ -21,7 +21,7 @@ namespace Kentico.Xperience.Jira.Automation
                 throw new NullReferenceException("Webhook name or event was not found in the automation step configuration.");
             }
 
-            var response = JiraHelper.CreateWebhook(StateObject, name, events, scope);
+            var response = JiraApiHelper.CreateWebhook(StateObject, name, events, scope);
 
             var webhook = JObject.Parse(response);
             var uri = new Uri(webhook.Value<string>("self"));

@@ -42,7 +42,7 @@ namespace Kentico.Xperience.Jira.Controls
             drpIssues.Items.Clear();
             drpIssues.Items.Add(new ListItem("(select issue)", ""));
 
-            var issues = JiraHelper.GetIssues(Project, txtSearch.Text);
+            var issues = JiraApiHelper.GetIssues(Project, txtSearch.Text);
             var orderedIssues = issues.OrderBy(i => i.Value<string>("summaryText"));
 
             foreach (var issue in orderedIssues)

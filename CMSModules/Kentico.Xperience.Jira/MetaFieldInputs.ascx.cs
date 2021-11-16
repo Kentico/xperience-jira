@@ -114,7 +114,7 @@ namespace Kentico.Xperience.Jira.Controls
                 return; 
             }
 
-            var project = JiraHelper.GetProjectWithCreateSchema(Project, IssueType);
+            var project = JiraApiHelper.GetProjectWithCreateSchema(Project, IssueType);
             if (project == null)
             {
                 ShowInformation("Selected project couldn't be found. Please select another.");

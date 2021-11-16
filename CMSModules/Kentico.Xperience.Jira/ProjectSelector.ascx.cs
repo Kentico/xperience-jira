@@ -36,7 +36,7 @@ namespace Kentico.Xperience.Jira.Controls
             drpProjects.Items.Clear();
             drpProjects.Items.Add(new ListItem("(select project)", ""));
 
-            var projects = JiraHelper.GetProjects();
+            var projects = JiraApiHelper.GetProjects();
             var orderedProjects = projects.OrderBy(p => p.Name);
 
             foreach (var proj in orderedProjects)

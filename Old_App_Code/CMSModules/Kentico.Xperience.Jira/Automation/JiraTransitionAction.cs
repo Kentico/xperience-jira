@@ -36,11 +36,9 @@ namespace Kentico.Xperience.Jira.Automation
                 }
             }
 
-            var jiraHelper = new JiraHelper(user);
             comment = this.MacroResolver.ResolveMacros(comment);
-
-            jiraHelper.AddComment(issueId, comment);
-            jiraHelper.DoTransition(issueId, transition);
+            JiraApiHelper.AddComment(issueId, comment, user);
+            JiraApiHelper.DoTransition(issueId, transition, user);
         }
     }
 }

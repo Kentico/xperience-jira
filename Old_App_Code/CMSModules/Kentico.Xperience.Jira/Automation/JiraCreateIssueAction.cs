@@ -4,6 +4,7 @@ using CMS.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Kentico.Xperience.Jira.Automation
 {
@@ -25,14 +26,12 @@ namespace Kentico.Xperience.Jira.Automation
                 throw new NullReferenceException("Project or issue type was not found in the automation step configuration.");
             }
 
-            var metaFields = new Hashtable();
-            foreach (var pair in metadata.Split('|'))
-            {
-                var values = pair.Split(';');
-                metaFields[values[0]] = values[1];
-            }
+            // Convert stored metadata string into properties for creation
+            var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
+            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
+            var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
 
-            // Create description
+            // Add description to properties
             var contact = InfoObject as ContactInfo;
             var description = "";
             foreach (var key in contact.ColumnNames)
@@ -45,10 +44,10 @@ namespace Kentico.Xperience.Jira.Automation
 
                 description += $"\\\\*{key}:* {value}";
             }
-            metaFields["description"] = description;
+            properties.Add(new JProperty("description", description));
 
-            var jiraHelper = new JiraHelper(User);
-            var response = jiraHelper.CreateIssue(metaFields, project, issueType, this.MacroResolver);
+            
+            var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
             var createdIssue = JObject.Parse(response).Value<string>("id");
 
             JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);

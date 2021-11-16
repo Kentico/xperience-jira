@@ -42,7 +42,7 @@ namespace Kentico.Xperience.Jira.Controls
             drpIssueTypes.Items.Clear();
             drpIssueTypes.Items.Add(new ListItem("(select issue type)", ""));
 
-            var project = JiraHelper.GetProjectWithIssueTypes(Project);
+            var project = JiraApiHelper.GetProjectWithIssueTypes(Project);
             if (project == null || project.IssueTypes.Count() == 0)
             {
                 ShowInformation("Selected project has no issue types. Please select another.");

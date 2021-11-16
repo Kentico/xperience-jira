@@ -56,7 +56,7 @@ namespace Kentico.Xperience.Jira
                         var webhook = MovePageToNextStep(infoObj as TreeNode);
                         if (!String.IsNullOrEmpty(webhook) && deleteWebhook)
                         {
-                            JiraHelper.DeleteWebhook(webhook);
+                            JiraApiHelper.DeleteWebhook(webhook);
                         }
                     }
                     else if (infoObj is AutomationStateInfo)
@@ -64,7 +64,7 @@ namespace Kentico.Xperience.Jira
                         var webhook = MoveProcessToNextStep(infoObj as AutomationStateInfo);
                         if (!String.IsNullOrEmpty(webhook) && deleteWebhook)
                         {
-                            JiraHelper.DeleteWebhook(webhook);
+                            JiraApiHelper.DeleteWebhook(webhook);
                         }
                     }
                 }
