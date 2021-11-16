@@ -53,7 +53,7 @@ The __Summary__ field (the issue title) is required, and your company may have a
 
 #### Linking issues and objects
 
-Using the __Create Jira issue__ action "links" the page or automation process to the newly-created Jira issue and its project. This is done by storing the IDs of the issue and project in the `DocumentCustomData` column for workflows and `StateCustomData` for automation processes. If you need to retrieve these values for any reason (e.g. within a custom handler), you can use [`JiraHelper.GetLinkedIssue()`](/Old_App_Code/CMSModules/Kentico.Xperience.Jira/JiraHelper.cs#L562) or [`JiraHelper.GetLinkedProject()`](/Old_App_Code/CMSModules/Kentico.Xperience.Jira/JiraHelper.cs#L583).
+Using the __Create Jira issue__ action "links" the page or automation process to the newly-created Jira issue and its project. This is done by storing the IDs of the issue and project in the `DocumentCustomData` column for workflows and `StateCustomData` for automation processes. If you need to retrieve these values for any reason (e.g. within a custom handler), you can use [`JiraHelper.GetLinkedIssue()`](/Old_App_Code/CMSModules/Kentico.Xperience.Jira/JiraHelper.cs#L257) or [`JiraHelper.GetLinkedProject()`](/Old_App_Code/CMSModules/Kentico.Xperience.Jira/JiraHelper.cs#L279).
 
 ### Transitioning Jira issues between steps
 
