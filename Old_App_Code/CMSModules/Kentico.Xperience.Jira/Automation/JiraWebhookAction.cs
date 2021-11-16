@@ -1,4 +1,5 @@
 ﻿using CMS.Automation;
+using CMS.EventLog;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -18,16 +19,24 @@ namespace Kentico.Xperience.Jira.Automation
 
             if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(events))
             {
-                throw new NullReferenceException("Webhook name or event was not found in the automation step configuration.");
+                throw new InvalidOperationException("Webhook name or event was not found in the automation step configuration.");
             }
 
             var response = JiraApiHelper.CreateWebhook(StateObject, name, events, scope);
+            var content = response.Content.ReadAsStringAsync().Result;
 
-            var webhook = JObject.Parse(response);
-            var uri = new Uri(webhook.Value<string>("self"));
-            var id = uri.Segments.Last();
+            if (response.IsSuccessStatusCode)
+            {
+                var webhook = JObject.Parse(content);
+                var uri = new Uri(webhook.Value<string>("self"));
+                var id = uri.Segments.Last();
 
-            JiraHelper.LinkJiraWebhook(StateObject, id);
+                JiraHelper.LinkJiraWebhook(StateObject, id);
+            }
+            else
+            {
+                LogMessage(EventType.ERROR, nameof(Execute), content, StateObject);
+            }
         }
     }
 }

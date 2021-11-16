@@ -18,7 +18,7 @@ namespace Kentico.Xperience.Jira.Automation
 
             if (String.IsNullOrEmpty(issueId) || String.IsNullOrEmpty(transition))
             {
-                throw new NullReferenceException("Linked Jira issue not found in the automation state's custom data.");
+                throw new InvalidOperationException("Linked Jira issue not found in the automation state's custom data.");
             }
 
             var user = User;

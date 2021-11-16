@@ -1,4 +1,5 @@
-﻿using CMS.DataEngine;
+﻿using CMS.Core;
+using CMS.DataEngine;
 using CMS.Helpers;
 using CMS.Membership;
 using CMS.SiteProvider;
@@ -53,6 +54,20 @@ namespace Kentico.Xperience.Jira
             }
         }
 
+        private static IEventLogService EventLogService
+        {
+            get
+            {
+                return Service.Resolve<IEventLogService>();
+            }
+        }
+
+        /// <summary>
+        /// Returns the Base64 encoded Jira credentials for the specified user, or
+        /// the default Global Administrator if the user has not set them.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if a Jira API token was
+        /// not found for the specified user or the Global Administrator.</exception>
         private static string GetBasicAuthorization(UserInfo user = null)
         {
             if(user == null)
@@ -72,13 +87,20 @@ namespace Kentico.Xperience.Jira
 
             if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(token))
             {
-                throw new NullReferenceException("The email and/or JiraApiToken properties have not been set.");
+                throw new ArgumentNullException("The email and/or JiraApiToken properties have not been set.");
             }
 
             var bytes = Encoding.UTF8.GetBytes($"{email}:{token}");
             return Convert.ToBase64String(bytes);
         }
 
+        /// <summary>
+        /// Returns the absolute URL which should be called when a Jira webhook triggers.
+        /// </summary>
+        /// <param name="infoObj">The Xperience object which has the linked Jira issue ID
+        /// in its custom data column.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the currently running site
+        /// cannot be found.</exception>
         private static string GetCallbackUrl(BaseInfo infoObj)
         {
             var site = SiteContext.CurrentSite;
@@ -88,7 +110,7 @@ namespace Kentico.Xperience.Jira
             }
             if (site == null)
             {
-                throw new Exception("Unable to retrieve current site.");
+                throw new InvalidOperationException("Unable to retrieve current site.");
             }
 
             return $"https://{site.DomainName}/jiraapi/{infoObj.TypeInfo.ObjectClassName}/" + "${issue.id}";
@@ -101,7 +123,17 @@ namespace Kentico.Xperience.Jira
         public static IEnumerable<JiraProject> GetProjects()
         {
             var response = DoRequest(GET_PROJECTS, HttpMethod.Get);
-            return JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(response);
+            var content = response.Content.ReadAsStringAsync().Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(content);
+            }
+            else
+            {
+                EventLogService.LogError(nameof(JiraApiHelper), nameof(GetProjects), content);
+                return null;
+            }
         }
 
         /// <summary>
@@ -111,8 +143,19 @@ namespace Kentico.Xperience.Jira
         public static JArray GetTransitions(string issueId)
         {
             var url = String.Format(GET_TRANSITIONS, issueId);
-            var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
-            return response.Value<JArray>("transitions");
+            var response = DoRequest(url, HttpMethod.Get);
+            var content = response.Content.ReadAsStringAsync().Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = JObject.Parse(content);
+                return obj.Value<JArray>("transitions");
+            }
+            else
+            {
+                EventLogService.LogError(nameof(JiraApiHelper), nameof(GetTransitions), content);
+                return null;
+            }
         }
 
         /// <summary>
@@ -123,8 +166,19 @@ namespace Kentico.Xperience.Jira
         public static JToken[] GetIssues(string projectId, string query)
         {
             var url = String.Format(GET_ISSUES, query, projectId);
-            var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
-            return response.SelectToken("$.sections[0].issues").ToArray();
+            var response = DoRequest(url, HttpMethod.Get);
+            var content = response.Content.ReadAsStringAsync().Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = JObject.Parse(content);
+                return obj.SelectToken("$.sections[0].issues").ToArray();
+            }
+            else
+            {
+                EventLogService.LogError(nameof(JiraApiHelper), nameof(GetIssues), content);
+                return null;
+            }
         }
 
         /// <summary>
@@ -135,11 +189,22 @@ namespace Kentico.Xperience.Jira
         public static JiraProject GetProjectWithCreateSchema(string projectId, string issueTypeId)
         {
             var url = String.Format(GET_ISSUE_CREATE_META, projectId, issueTypeId);
-            var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
-            var projectsArray = response.Value<JArray>("projects");
-            var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(projectsArray.ToString());
+            var response = DoRequest(url, HttpMethod.Get);
+            var content = response.Content.ReadAsStringAsync().Result;
 
-            return projects.Where(p => p.Id == projectId).FirstOrDefault();
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = JObject.Parse(content);
+                var projectsArray = obj.Value<JArray>("projects");
+                var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(projectsArray.ToString());
+
+                return projects.Where(p => p.Id == projectId).FirstOrDefault();
+            }
+            else
+            {
+                EventLogService.LogError(nameof(JiraApiHelper), nameof(GetProjectWithCreateSchema), content);
+                return null;
+            }
         }
 
         /// <summary>
@@ -149,11 +214,22 @@ namespace Kentico.Xperience.Jira
         public static JiraProject GetProjectWithIssueTypes(string projectId)
         {
             var url = String.Format(GET_ISSUE_TYPES, projectId);
-            var response = JObject.Parse(DoRequest(url, HttpMethod.Get));
-            var projectToken = response.SelectToken("$.projects");
-            var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(JsonConvert.SerializeObject(projectToken));
+            var response = DoRequest(url, HttpMethod.Get);
+            var content = response.Content.ReadAsStringAsync().Result;
 
-            return projects.Where(p => p.Id == projectId).FirstOrDefault();
+            if (response.IsSuccessStatusCode)
+            {
+                var obj = JObject.Parse(content);
+                var projectToken = obj.SelectToken("$.projects");
+                var projects = JsonConvert.DeserializeObject<IEnumerable<JiraProject>>(JsonConvert.SerializeObject(projectToken));
+
+                return projects.Where(p => p.Id == projectId).FirstOrDefault();
+            }
+            else
+            {
+                EventLogService.LogError(nameof(JiraApiHelper), nameof(GetProjectWithIssueTypes), content);
+                return null;
+            }
         }
 
         /// <summary>
@@ -167,7 +243,7 @@ namespace Kentico.Xperience.Jira
         {
             if (!JiraHelper.IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled.");
+                return;
             }
 
             var data = $"{{ transition: {{ id:\"{transitionId}\" }} }}";
@@ -189,10 +265,22 @@ namespace Kentico.Xperience.Jira
         /// See <see href="https://developer.atlassian.com/server/jira/platform/webhooks/#registering-events-for-a-webhook"/>.</param>
         /// <param name="scope">One or more filters which are used to restrict when the webhook triggers.
         /// See <see href="https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ConstructingJQLqueries"/>.</param>
-        /// <returns>The response from the Jira server after webhook creation, containing information
-        /// about the created webhook.</returns>
-        public static string CreateWebhook(BaseInfo infoObj, string name, string events, string scope)
+        /// <exception cref="InvalidOperationException">Thrown if the currently running site cannot
+        /// be found.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the <paramref name="infoObj"/> or
+        /// <paramref name="events"/> arguments are null.</exception>
+        public static HttpResponseMessage CreateWebhook(BaseInfo infoObj, string name, string events, string scope)
         {
+            if (infoObj == null)
+            {
+                throw new ArgumentNullException(nameof(infoObj));
+            }
+
+            if (events == null)
+            {
+                throw new ArgumentNullException(nameof(events));
+            }
+
             var data = $"{{ name: '{name}', url: '{GetCallbackUrl(infoObj)}', excludeBody: false }}";
             var obj = JsonConvert.DeserializeObject<JObject>(data);
 
@@ -217,7 +305,7 @@ namespace Kentico.Xperience.Jira
         {
             if (!JiraHelper.IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled.");
+                return;
             }
 
             comment = HttpUtility.JavaScriptStringEncode(HTMLHelper.HTMLDecode(comment));
@@ -235,13 +323,11 @@ namespace Kentico.Xperience.Jira
         /// <param name="projectId">The internal project ID to create the issue under.</param>
         /// <param name="issueTypeId">The internal ID of the issue type to create.</param>
         /// <param name="user">The Xperience user whose API token will be used in the request.</param>
-        /// <returns>The response from the Jira server after the issue is created, containing
-        /// information about the created issue.</returns>
-        public static string CreateIssue(IEnumerable<JProperty> properties, string projectId, string issueTypeId, UserInfo user)
+        public static HttpResponseMessage CreateIssue(IEnumerable<JProperty> properties, string projectId, string issueTypeId, UserInfo user)
         {
             if (!JiraHelper.IsEnabled)
             {
-                throw new Exception("Jira integration is not enabled.");
+                return null;
             }
 
             var data = $"{{ fields: {{ project: {{ id: \"{projectId}\" }}, issuetype: {{id: \"{issueTypeId}\" }} }}";
@@ -265,7 +351,16 @@ namespace Kentico.Xperience.Jira
             DoRequest(url, HttpMethod.Delete);
         }
 
-        private static string DoRequest(string url, HttpMethod method, UserInfo user = null, JObject data = null)
+        /// <summary>
+        /// Executes a request against the Jira server and returns the unmodified response.
+        /// </summary>
+        /// <param name="url">The URL of the request.</param>
+        /// <param name="method">Verb to use in the request. Accepts GET, POST, and DELETE.</param>
+        /// <param name="user">The Xperience user whose API token will be used in the request.</param>
+        /// <param name="data">The data to include in the body of the request (for non-GET requests).</param>
+        /// <exception cref="ArgumentNullException">Thrown if a Jira API token was not found for the
+        /// specified user or the Global Administrator.</exception>
+        private static HttpResponseMessage DoRequest(string url, HttpMethod method, UserInfo user = null, JObject data = null)
         {
             using (var client = new HttpClient())
             {
@@ -286,23 +381,9 @@ namespace Kentico.Xperience.Jira
                     response = client.DeleteAsync(url).Result;
                 }
 
-                if (response != null)
-                {
-                    var content = response.Content.ReadAsStringAsync().Result;
-                    client.Dispose();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return content;
-                    }
-                    else
-                    {
-                        throw new Exception($"Error requesting {url}: {content}.");
-                    }
-                }
+                client.Dispose();
+                return response;
             }
-
-            return String.Empty;
         }
     }
 }

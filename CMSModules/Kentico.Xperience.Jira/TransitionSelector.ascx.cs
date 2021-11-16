@@ -37,25 +37,19 @@ namespace Kentico.Xperience.Jira.Controls
                 return;
             }
 
-            try
+            drpTransitions.Items.Clear();
+            drpTransitions.Items.Add(new ListItem("(select transition)", ""));
+
+            var transitions = JiraApiHelper.GetTransitions(Issue);
+            if (transitions == null)
             {
-                var transitions = JiraApiHelper.GetTransitions(Issue);
-
-                drpTransitions.Items.Clear();
-                drpTransitions.Items.Add(new ListItem("(select transition)", ""));
-
-                foreach (var trans in transitions)
-                {
-                    drpTransitions.Items.Add(new ListItem(trans.Value<string>("name"), trans.Value<string>("id")));
-                }
+                ShowInformation("Unable to load transitions. Please select another issue.");
+                return;
             }
-            catch (Exception e)
+
+            foreach (var trans in transitions)
             {
-                // Couldn't load transitions, probably because the previously selected issue no longer exists
-                if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)
-                {
-                    drpTransitions.Items.Add(new ListItem("(saved value)", loadedValue));
-                }
+                drpTransitions.Items.Add(new ListItem(trans.Value<string>("name"), trans.Value<string>("id")));
             }
 
             if (!String.IsNullOrEmpty(loadedValue) && !IsPostBack)

@@ -17,7 +17,7 @@ namespace Kentico.Xperience.Jira.Workflow
 
             if (String.IsNullOrEmpty(issueId) || String.IsNullOrEmpty(transition))
             {
-                throw new NullReferenceException("Transition not found in workflow step configuration, or linked Jira issue not found in the document's custom data.");
+                throw new InvalidOperationException("Transition not found in workflow step configuration, or linked Jira issue not found in the document's custom data.");
             }
 
             var comment = String.IsNullOrEmpty(Comment) ? $"Workflow changed automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;

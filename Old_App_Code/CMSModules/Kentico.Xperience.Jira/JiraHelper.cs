@@ -6,7 +6,6 @@ using CMS.MacroEngine;
 using Kentico.Xperience.Jira.Models;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -140,8 +139,8 @@ namespace Kentico.Xperience.Jira
         /// <param name="infoObj">The Xperience object that will be linked to the webhook, for
         /// retrieving the linked issue and project.</param>
         /// <param name="scope">A string containing JQL queries in the format "section:query\r\nsection:query."</param>
-        /// <exception cref="ArgumentException">Thrown if the scope contains macros for linked Jira data, but the data
-        /// wasn't found.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the scope contains macros for linked Jira data, but the
+        /// data wasn't found.</exception>
         public static JObject GetFiltersFromScope(BaseInfo infoObj, string scope)
         {
             var filters = new JObject();
@@ -156,7 +155,7 @@ namespace Kentico.Xperience.Jira
                 {
                     if (String.IsNullOrEmpty(GetLinkedIssue(infoObj)))
                     {
-                        throw new ArgumentException($"Jira webhook scopes contained a filter with '{LinkedIssueMacro}', but no linked issue was found.");
+                        throw new InvalidOperationException($"Jira webhook scopes contained a filter with '{LinkedIssueMacro}', but no linked issue was found.");
                     }
 
                     value = value.Replace(LinkedIssueMacro, GetLinkedIssue(infoObj));
@@ -165,7 +164,7 @@ namespace Kentico.Xperience.Jira
                 {
                     if (String.IsNullOrEmpty(GetLinkedProject(infoObj)))
                     {
-                        throw new ArgumentException($"Jira webhook scopes contained a filter with '{LinkedProjectMacro}', but no linked project was found.");
+                        throw new InvalidOperationException($"Jira webhook scopes contained a filter with '{LinkedProjectMacro}', but no linked project was found.");
                     }
 
                     value = value.Replace(LinkedProjectMacro, GetLinkedProject(infoObj));

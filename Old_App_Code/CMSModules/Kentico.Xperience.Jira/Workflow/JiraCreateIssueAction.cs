@@ -1,7 +1,7 @@
 ﻿using CMS.DocumentEngine;
+using CMS.EventLog;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Linq;
 
 namespace Kentico.Xperience.Jira.Workflow
@@ -21,7 +21,7 @@ namespace Kentico.Xperience.Jira.Workflow
 
             if (String.IsNullOrEmpty(project) || String.IsNullOrEmpty(issueType))
             {
-                throw new NullReferenceException("Project or issue type was not found in the workflow step configuration.");
+                throw new InvalidOperationException("Project or issue type was not found in the workflow step configuration.");
             }
 
             // Convert stored metadata string into properties for creation
@@ -30,14 +30,21 @@ namespace Kentico.Xperience.Jira.Workflow
             var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
 
             var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
-            var createdIssue = JObject.Parse(response).Value<string>("id");
+            var content = response.Content.ReadAsStringAsync().Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var createdIssue = JObject.Parse(content).Value<string>("id");
+                JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
 
-            JiraHelper.LinkJiraIssue(Node, createdIssue, project);
-
-            // Get workflow comment
-            var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
-            comment = this.MacroResolver.ResolveMacros(comment);
-            JiraApiHelper.AddComment(createdIssue, comment, User);
+                // Get workflow comment
+                var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
+                comment = this.MacroResolver.ResolveMacros(comment);
+                JiraApiHelper.AddComment(createdIssue, comment, User);
+            }
+            else
+            {
+                LogMessage(EventType.ERROR, nameof(Execute), content, Node);
+            }
         }
     }
 }

@@ -43,8 +43,13 @@ namespace Kentico.Xperience.Jira.Controls
             drpIssues.Items.Add(new ListItem("(select issue)", ""));
 
             var issues = JiraApiHelper.GetIssues(Project, txtSearch.Text);
-            var orderedIssues = issues.OrderBy(i => i.Value<string>("summaryText"));
+            if(issues == null)
+            {
+                ShowInformation("Unable to load Jira issues. Please check the Event Log.");
+                return;
+            }
 
+            var orderedIssues = issues.OrderBy(i => i.Value<string>("summaryText"));
             foreach (var issue in orderedIssues)
             {
                 drpIssues.Items.Add(new ListItem(issue.Value<string>("summaryText"), issue.Value<string>("id")));

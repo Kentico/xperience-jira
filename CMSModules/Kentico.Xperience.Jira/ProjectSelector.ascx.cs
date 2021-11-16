@@ -37,8 +37,13 @@ namespace Kentico.Xperience.Jira.Controls
             drpProjects.Items.Add(new ListItem("(select project)", ""));
 
             var projects = JiraApiHelper.GetProjects();
-            var orderedProjects = projects.OrderBy(p => p.Name);
+            if(projects == null)
+            {
+                ShowInformation("Unable to load Jira projects. Please check the Event Log.");
+                return;
+            }
 
+            var orderedProjects = projects.OrderBy(p => p.Name);
             foreach (var proj in orderedProjects)
             {
                 drpProjects.Items.Add(new ListItem(proj.Name, proj.Id));

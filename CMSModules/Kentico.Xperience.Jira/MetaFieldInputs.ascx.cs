@@ -69,7 +69,6 @@ namespace Kentico.Xperience.Jira.Controls
                     var encodedValue = HttpUtility.UrlEncode(formSubmittedData);
                     values.Add($"{field.Key};{encodedValue}");
                 }
-
             }
 
             return values.Join("|");
@@ -120,7 +119,6 @@ namespace Kentico.Xperience.Jira.Controls
                 ShowInformation("Selected project couldn't be found. Please select another.");
                 return;
             }
-
 
             var issueType = project.IssueTypes.Where(i => i.Id == IssueType).FirstOrDefault();
             if (issueType == null)
