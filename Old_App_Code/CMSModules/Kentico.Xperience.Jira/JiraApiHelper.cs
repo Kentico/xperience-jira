@@ -87,7 +87,7 @@ namespace Kentico.Xperience.Jira
 
             if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(token))
             {
-                throw new ArgumentNullException("The email and/or JiraApiToken properties have not been set.");
+                throw new ArgumentException("The email and/or JiraApiToken properties have not been set.");
             }
 
             var bytes = Encoding.UTF8.GetBytes($"{email}:{token}");
@@ -123,7 +123,7 @@ namespace Kentico.Xperience.Jira
         public static IEnumerable<JiraProject> GetProjects()
         {
             var response = DoRequest(GET_PROJECTS, HttpMethod.Get);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {
@@ -144,7 +144,7 @@ namespace Kentico.Xperience.Jira
         {
             var url = String.Format(GET_TRANSITIONS, issueId);
             var response = DoRequest(url, HttpMethod.Get);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {
@@ -167,7 +167,7 @@ namespace Kentico.Xperience.Jira
         {
             var url = String.Format(GET_ISSUES, query, projectId);
             var response = DoRequest(url, HttpMethod.Get);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {
@@ -190,7 +190,7 @@ namespace Kentico.Xperience.Jira
         {
             var url = String.Format(GET_ISSUE_CREATE_META, projectId, issueTypeId);
             var response = DoRequest(url, HttpMethod.Get);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {
@@ -215,7 +215,7 @@ namespace Kentico.Xperience.Jira
         {
             var url = String.Format(GET_ISSUE_TYPES, projectId);
             var response = DoRequest(url, HttpMethod.Get);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {

@@ -95,8 +95,20 @@ namespace Kentico.Xperience.Jira
         /// <param name="issueFields">The issue type's fields with their schema.</param>
         /// <param name="metadata">The stored metadata string from the database.</param>
         /// <param name="resolver">A macro resolver to resolve field values.</param>
+        /// <exception cref="ArgumentNullException">Thrown if the Jira issue type fields couldn't be loaded,
+        /// or a <see cref="MacroResolver"/> wasn't provided.</exception>
         public static List<JProperty> CreateIssueProperties(IEnumerable<JiraIssueField> issueFields, string metadata, MacroResolver resolver)
         {
+            if (issueFields == null)
+            {
+                throw new ArgumentNullException(nameof(issueFields));
+            }
+
+            if (resolver == null)
+            {
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
             var properties = new List<JProperty>();
             var pairs = metadata.Split('|');
 

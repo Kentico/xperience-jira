@@ -35,7 +35,7 @@ namespace Kentico.Xperience.Jira
         public HttpResponseMessage Run(string type, string issueId)
         {
             var deleteWebhook = SettingsKeyInfoProvider.GetBoolValue("JiraDeleteWebhooks");
-            var content = JObject.Parse(Request.Content.ReadAsStringAsync().Result);
+            var content = JObject.Parse(Request.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult());
 
             BaseInfo infoObj = null;
             if (type.ToLower() == TreeNode.TYPEINFO.ObjectClassName.ToLower())

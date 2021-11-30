@@ -23,7 +23,7 @@ namespace Kentico.Xperience.Jira.Workflow
             }
 
             var response = JiraApiHelper.CreateWebhook(StateObject, name, events, scope);
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {

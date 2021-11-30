@@ -4,6 +4,7 @@ using CMS.EventLog;
 using CMS.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -27,43 +28,51 @@ namespace Kentico.Xperience.Jira.Automation
                 throw new InvalidOperationException("Project or issue type was not found in the automation step configuration.");
             }
 
-            // Convert stored metadata string into properties for creation
-            var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
-            if(selectedProject == null)
+            try
             {
-                return;
-            }
-
-            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
-            var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
-
-            // Add description to properties
-            var contact = InfoObject as ContactInfo;
-            var description = new StringBuilder();
-            foreach (var key in contact.ColumnNames)
-            {
-                var value = ValidationHelper.GetString(contact.GetProperty(key), "");
-                if (String.IsNullOrEmpty(value))
+                // Convert stored metadata string into properties for creation
+                var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
+                if (selectedProject == null)
                 {
-                    continue;
+                    return;
                 }
 
-                description.Append($"\\\\*{key}:* {value}");
-            }
-            properties.Add(new JProperty("description", description.ToString()));
+                var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
+                var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
 
-            
-            var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
-            var content = response.Content.ReadAsStringAsync().Result;
-            if (response.IsSuccessStatusCode)
-            {
-                var createdIssue = JObject.Parse(content).Value<string>("id");
-                JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
+                // Add description to properties
+                var contact = InfoObject as ContactInfo;
+                var description = new StringBuilder();
+                foreach (var key in contact.ColumnNames)
+                {
+                    var value = ValidationHelper.GetString(contact.GetProperty(key), "");
+                    if (String.IsNullOrEmpty(value))
+                    {
+                        continue;
+                    }
+
+                    description.Append($"\\\\*{key}:* {value}");
+                }
+                properties.Add(new JProperty("description", description.ToString()));
+
+
+                var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
+                var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdIssue = JObject.Parse(content).Value<string>("id");
+                    JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
+                }
+                else
+                {
+                    LogMessage(EventType.ERROR, nameof(Execute), content, StateObject);
+                }
             }
-            else
+            catch (ArgumentNullException ex)
             {
-                LogMessage(EventType.ERROR, nameof(Execute), content, StateObject);
+                LogMessage(EventType.ERROR, nameof(Execute), ex.Message, StateObject);
             }
+
         }
     }
 }
