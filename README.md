@@ -59,18 +59,18 @@ This integration provides 3 custom actions for both [Workflows](https://docs.xpe
 
 ### Create Jira issues
 
-You can create new Jira issues using the __Create Jira issue__ step in workflows or in marketing automation processes. When this step is reached in the workflow or in the process, a new Jira issue is created and the workflow continues to the next step. If an Xperience user that moves the workflow or automation process into this step provides a comment, the comment is also added to the Jira issue.
+You can create new Jira issues using the __Create Jira issue__ step in workflows or in marketing automation processes. When this step is reached in the workflow or in the process, a new Jira issue is created and the workflow continues to the next step. If an Xperience user that moves the workflow or automation process into this step provides a [comment](https://docs.xperience.io/managing-website-content/working-with-pages/using-workflows#Usingworkflows-Submittingapageforapprovalwithacomment), the comment is also added to the Jira issue.
 
 To create new Jira issues:
 
 1. Add the __Create Jira issue__ step into your workflow or marketing automation process.
-2. Configure the __Project__ and __Issue type__ properties of the custom step using the drop-down menus. New created Jira issues will be of the selected issue type. 
-   - Based on the selected project and issue type, configure the appropriate fields in the __Fields__ property.
-
+2. Configure the __Project__ and __Issue type__ properties of the custom step using the drop-down menus. New created Jira issues will be of the selected issue type.
+3. Based on the selected project and issue type, configure the appropriate fields in the __Fields__ property.
+   - Configure the required __Summary__ field, which corresponds to the issue title in Jira, and any other custom fields that are required by your company.
+  
 ![Create issue](/assets/create-issue.png)
 
-3. Configure the required __Summary__ field, which corresponds to the issue title, and any other custom fields that are required by your company. 
-   - When configuring the _Create Jira issue_ step in a workflow, you can use macros, such as `{%NodeAliasPath%}`. The macros will be resolved according to the page that is using the workflow. Macros cannot be used in marketing automation process fields.
+When configuring properties of the _Create Jira issue_ step in a workflow, you can use macros, such as `{%NodeAliasPath%}`. The macros will be resolved according to the page that is using the workflow. Macros cannot be used in marketing automation process fields.
 
 #### Link Jira issues and Xperience objects
 
