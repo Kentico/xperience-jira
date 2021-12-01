@@ -24,34 +24,39 @@ namespace Kentico.Xperience.Jira.Workflow
                 throw new InvalidOperationException("Project or issue type was not found in the workflow step configuration.");
             }
 
-            try
+            if (MacroResolver == null)
             {
-                // Convert stored metadata string into properties for creation
-                var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
-                var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
-                var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, this.MacroResolver);
-
-                var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
-                var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var createdIssue = JObject.Parse(content).Value<string>("id");
-                    JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
-
-                    // Get workflow comment
-                    var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
-                    comment = this.MacroResolver.ResolveMacros(comment);
-                    JiraApiHelper.AddComment(createdIssue, comment, User);
-                }
-                else
-                {
-                    LogMessage(EventType.ERROR, nameof(Execute), content, Node);
-                }
+                LogMessage(EventType.ERROR, nameof(Execute), "Unable to retrieve a MacroResolver for this workflow.", Node);
+                return;
             }
-            catch (ArgumentNullException ex)
+
+            // Convert stored metadata string into properties for creation
+            var selectedProject = JiraApiHelper.GetProjectWithCreateSchema(project, issueType);
+            var issueFields = selectedProject.IssueTypes.Where(i => i.Id == issueType).FirstOrDefault().GetFields();
+            if (issueFields == null)
             {
-                LogMessage(EventType.ERROR, nameof(Execute), ex.Message, Node);
+                LogMessage(EventType.ERROR, nameof(Execute), "Unable to load Jira issue type fields.", Node);
+                return;
+            }
+
+            var properties = JiraHelper.CreateIssueProperties(issueFields, metadata, MacroResolver);
+
+            var response = JiraApiHelper.CreateIssue(properties, project, issueType, User);
+            var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var createdIssue = JObject.Parse(content).Value<string>("id");
+                JiraHelper.LinkJiraIssue(StateObject, createdIssue, project);
+
+                // Get workflow comment
+                var comment = String.IsNullOrEmpty(Comment) ? $"Issue created automatically by Xperience workflow '{Workflow.WorkflowDisplayName}' for page '{Node.NodeAliasPath}.'" : Comment;
+                comment = MacroResolver.ResolveMacros(comment);
+                JiraApiHelper.AddComment(createdIssue, comment, User);
+            }
+            else
+            {
+                LogMessage(EventType.ERROR, nameof(Execute), content, Node);
             }
         }
     }
