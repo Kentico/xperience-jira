@@ -20,7 +20,7 @@ namespace Kentico.Xperience.Jira
             base.OnInit();
             GlobalConfiguration.Configuration.Routes.MapHttpRoute(
                 "jiraapi",
-                "jiraapi/{type}/{issue}",
+                "jiraapi/{type}/{issueId}",
                 defaults: new { controller = "JiraWebhook", action = "Run", issue = RouteParameter.Optional }
             );
         }
