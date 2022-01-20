@@ -103,6 +103,7 @@ To create a Jira webhook:
 1. Add the __Create Jira webhook__ step into your Xperience workflow or marketing automation process.
 2. Configure the following properties of the custom step:
    - __Name__ — An arbitrary name for the webhook which will appear in Jira.
+   - __Administraion URL__ — The absolute URL to the Xperience administraion website.
    - __Events__ — A comma-separated list of Jira events that will trigger the webhook. See [Registering events for a webhook](https://developer.atlassian.com/server/jira/platform/webhooks/#registering-events-for-a-webhook) for a list of valid events.
    - __Scope__ (optional) — One or more JQL queries that will filter when the webhook triggers. For example, the `jira:issue_updated` event will trigger for all issues unless you specify certain issues, projects, resolutions, etc. See [Constructing JQL queries](https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ConstructingJQLqueries) for more information on writing JQL queries.
      - If the page or automation process is [linked](#linking-issues-and-objects) to a Jira issue and a project, you can use the `##LinkedIssue##` and `##LinkedProject##` macros in the scope to reference the respective linked values.

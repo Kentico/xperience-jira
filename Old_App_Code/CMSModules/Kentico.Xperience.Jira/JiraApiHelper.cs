@@ -97,23 +97,14 @@ namespace Kentico.Xperience.Jira
         /// <summary>
         /// Returns the absolute URL which should be called when a Jira webhook triggers.
         /// </summary>
-        /// <param name="infoObj">The Xperience object which has the linked Jira issue ID
-        /// in its custom data column.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the currently running site
-        /// cannot be found.</exception>
-        private static string GetCallbackUrl(BaseInfo infoObj)
+        /// <param name="adminUrl">The absolute URL to the Xperience administration.</param>
+        /// <param name="className">The class name of the object which triggered the webbook
+        /// creation.</param>
+        private static string GetCallbackUrl(string adminUrl, string className)
         {
-            var site = SiteContext.CurrentSite;
-            if (site == null)
-            {
-                site = infoObj.Site as SiteInfo;
-            }
-            if (site == null)
-            {
-                throw new InvalidOperationException("Unable to retrieve current site.");
-            }
 
-            return $"https://{site.DomainName}/jiraapi/{infoObj.TypeInfo.ObjectClassName}/" + "${issue.id}";
+
+            return $"{adminUrl}/jiraapi/{className}/${{issue.id}}";
         }
 
         /// <summary>
@@ -261,15 +252,14 @@ namespace Kentico.Xperience.Jira
         /// <param name="infoObj">The Xperience object which triggered webhook creation and contains
         /// Jira issue and project information in a database column.</param>
         /// <param name="name">The display name for the created webhook.</param>
+        /// <param name="adminUrl">The absolute URL to the Xperience administration.</param>
         /// <param name="events">One or more events which will cause the webhook to trigger.
         /// See <see href="https://developer.atlassian.com/server/jira/platform/webhooks/#registering-events-for-a-webhook"/>.</param>
         /// <param name="scope">One or more filters which are used to restrict when the webhook triggers.
         /// See <see href="https://confluence.atlassian.com/jirasoftwareserver/advanced-searching-939938733.html#Advancedsearching-ConstructingJQLqueries"/>.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the currently running site cannot
-        /// be found.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if the <paramref name="infoObj"/> or
-        /// <paramref name="events"/> arguments are null.</exception>
-        public static HttpResponseMessage CreateWebhook(BaseInfo infoObj, string name, string events, string scope)
+        /// <exception cref="ArgumentNullException">Thrown if the <paramref name="infoObj"/>, <paramref name="events"/>,
+        /// or <paramref name="adminUrl"/> arguments are null.</exception>
+        public static HttpResponseMessage CreateWebhook(BaseInfo infoObj, string name, string adminUrl, string events, string scope)
         {
             if (infoObj == null)
             {
@@ -281,7 +271,13 @@ namespace Kentico.Xperience.Jira
                 throw new ArgumentNullException(nameof(events));
             }
 
-            var data = $"{{ name: '{name}', url: '{GetCallbackUrl(infoObj)}', excludeBody: false }}";
+            if (String.IsNullOrEmpty(adminUrl))
+            {
+                throw new ArgumentNullException(nameof(adminUrl));
+            }
+
+            var webhookCallbackUrl = GetCallbackUrl(adminUrl, infoObj.TypeInfo.ObjectClassName);
+            var data = $"{{ name: '{name}', url: '{webhookCallbackUrl}', excludeBody: false }}";
             var obj = JsonConvert.DeserializeObject<JObject>(data);
 
             var eventsArray = events.Split(',');

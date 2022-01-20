@@ -14,15 +14,16 @@ namespace Kentico.Xperience.Jira.Automation
         public override void Execute()
         {
             var name = GetResolvedParameter("Name", "");
+            var url = GetResolvedParameter("URL", "");
             var events = GetResolvedParameter("Events", "");
             var scope = GetResolvedParameter("Scope", "");
 
-            if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(events))
+            if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(events) || String.IsNullOrEmpty(url))
             {
-                throw new InvalidOperationException("Webhook name or event was not found in the automation step configuration.");
+                throw new InvalidOperationException("Webhook name, event, or administration URL was not found in the workflow step configuration.");
             }
 
-            var response = JiraApiHelper.CreateWebhook(StateObject, name, events, scope);
+            var response = JiraApiHelper.CreateWebhook(StateObject, name, url, events, scope);
             var content = response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
